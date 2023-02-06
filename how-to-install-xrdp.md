@@ -1,0 +1,82 @@
+# Glossary
+RDP is the Remote Desktop Protocol. https://en.wikipedia.org/wiki/Remote_Desktop_Protocol
+
+Operating system (OS).
+
+# RDP features
+
+* Resizing the RDP client window, changes the resolution of the RDP server.
+* Copy/paste of text and maybe even files.
+* YouTube playback with almost acceptable speed and with sound.
+* The speed is so good, that I do most of my work via an RDP connection. Everything is snappy, even using an Integrated Development Environment (IDE).
+
+# Windows
+
+## Server
+On Windows you can enable the RDP server. E.g. right click on Windows Start Menu > System > Rename this PC (advanced) > tab "Remote" > Remote Desktop groupbox > enable "Allow remote connections to this computer". On Windows Server without full GUI experience > sconfig.cmd.
+
+## Client
+Open the app Remote Desktop connection.
+Or install another RDP client e.g. rdcman https://en.wikipedia.org/wiki/Remote_Desktop_Protocol 
+
+I prefer rdcman because I need the RDP client to have a window titlebar and window border, I can hide the menu, and after I resize the window, if I select to reconnect, the RDP server's resolution will be changed correctly.
+
+
+# Linux and FreeBSD
+
+## Server
+
+If you cannot make your X server work correctly, e.g. small resolution. An alternative is to install an RDP server and to connect to this computer from another computer using an RDP client.
+
+Note: on the RDP server, you should log out if you use X11 and you are connected via the computer's keyboard and mouse (aka Ctrl+Alt+F1, aka one of the 8 virtual consoles). Before connecting using an RDP client.
+
+## Kubuntu 22.10
+
+<pre>
+sudo apt install xrdp xorgxrdp
+</pre>
+
+## EndeavourOS with KDE Plasma installed from the OS installer
+
+<pre>
+# As per https://wiki.archlinux.org/title/xrdp
+yay xrdp
+yay xorgxrdp
+
+systemctl enable --now xrdp
+
+cat /etc/X11/Xwrapper.config
+# Should say:
+allowed_users = anybody
+
+cat ~/.xinitrc
+# Should say:
+export DESKTOP_SESSION=plasma
+/usr/lib/plasma-dbus-run-session-if-needed startplasma-x11
+</pre>
+
+## Client
+Install from your OS binary packages `freerdp`.
+
+Run:
+<pre>
+xfreerdp --help
+</pre>
+
+Note down any of the command line parameters that you might need.
+
+Use a command line like:
+<pre>
+xfreerdp /u:admin /w:1920 /h:1080 /v:192.168.122.168 /video /rfx /network:lan /gfx /dynamic-resolution /bpp:32 /sound:sys:pulse
+</pre>
+
+You can resize the window and the resolution of the RDP server will change correctly.
+
+Other interesting command line parameters:
+<pre>
+connection.rdp
+/p:Pwd123!
++auto-reconnect
++drives
+/drive:home,/home/user
+</pre>
