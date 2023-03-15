@@ -1,13 +1,15 @@
 <script src="https://rawcdn.githack.com/oscarmorrison/md-page/master/md-page.js"></script><noscript>
 
+# How to install xrdp, the RDP server
+
 # Glossary
 RDP is the Remote Desktop Protocol. https://en.wikipedia.org/wiki/Remote_Desktop_Protocol
 
-Operating system (OS).
+OS means operating system.
 
 # RDP features
 
-* Resizing the RDP client window, changes the resolution of the RDP server.
+* Resizing the RDP client window, changes the resolution of the RDP server. The Microsoft Windows RDP server does not support this feature.
 * Copy/paste of text and maybe even files.
 * YouTube playback with almost acceptable speed and with sound.
 * The speed is so good, that I do most of my work via an RDP connection. Everything is snappy, even using an Integrated Development Environment (IDE).
@@ -38,8 +40,19 @@ Note: on the RDP server, you should log out if you use X11 and you are connected
 sudo apt install xrdp xorgxrdp
 </pre>
 
-## EndeavourOS with KDE Plasma installed from the OS installer
+## EndeavourOS with KDE Plasma installed from the OS installer, Arch Linux installed using archinstall with the option "desktop, kde" from the OS installer
 
+If yay is not installed, such as in Arch Linux, install yay from AUR https://aur.archlinux.org/packages/yay https://wiki.archlinux.org/title/Arch_User_Repository :
+<pre>
+pacman -S base-devel
+mkdir -p ~/work/aur ; cd ~/work/aur
+git clone https://aur.archlinux.org/yay.git
+cd yay
+makepkg
+sudo pacman -U yay*.pkg.tar.zst # E.g. yay-11.3.2-1-x86_64.pkg.tar.zst
+</pre>
+
+Then:
 <pre>
 # As per https://wiki.archlinux.org/title/xrdp
 yay xrdp
@@ -58,7 +71,7 @@ export DESKTOP_SESSION=plasma
 </pre>
 
 ## Client
-Install from your OS binary packages `freerdp`.
+Install from your OS the binary package `freerdp`.
 
 Run:
 <pre>
