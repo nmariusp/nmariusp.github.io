@@ -34,13 +34,13 @@ If you cannot make your X server work correctly, e.g. small resolution. An alter
 
 Note: on the RDP server, you should log out if you use X11 and you are connected via the computer's keyboard and mouse (aka Ctrl+Alt+F1, aka one of the 8 virtual consoles). Before connecting using an RDP client.
 
-## Kubuntu 22.10
+### Kubuntu 22.10
 
 <pre>
 sudo apt install xrdp xorgxrdp
 </pre>
 
-## EndeavourOS with KDE Plasma installed from the OS installer, Arch Linux installed using archinstall with the option "desktop, kde" from the OS installer
+### EndeavourOS with KDE Plasma installed from the OS installer, Arch Linux installed using archinstall with the option "desktop, kde" from the OS installer
 
 If yay is not installed, such as in Arch Linux, install yay from AUR https://aur.archlinux.org/packages/yay https://wiki.archlinux.org/title/Arch_User_Repository :
 <pre>
@@ -68,6 +68,54 @@ cat ~/.xinitrc
 # Should say:
 export DESKTOP_SESSION=plasma
 /usr/lib/plasma-dbus-run-session-if-needed startplasma-x11
+</pre>
+
+### FreeBSD 13.2
+
+<pre>
+I installed FreeBSD 13.2 using FreeBSD-13.2-RELEASE-amd64-disc1.iso.
+In the installer, I created a user named "administrator" and added this user to the user group "wheel".
+
+I connect to the VM in text user interface mode using ssh:
+ssh administrator@192.68.122.6
+
+su -
+
+Surviving at the command line: bash, emacs-nox, mc, git.
+chsh -s /usr/local/bin/bash
+
+Surviving in GUI: xorg,
+pw groupmod video -m administrator
+noto-2.0, sudo
+visudo
+, uncomment line:
+%wheel ALL=(ALL:ALL) ALL
+
+/etc/fstab
+proc /proc procfs rw 0 0
+mount -a
+
+pkg install kde5
+sysrc dbus_enable="YES"
+sysctl net.local.stream.recvspace=65536
+sysctl net.local.stream.sendspace=65536
+
+I followed the instructions from https://download.freebsd.org/doc/en/books/handbook/handbook_en.pdf up to and including the chapter "7.2.1.4. Start KDE Plasma".
+
+pkg install xrdp xorgxrdp
+Edit /etc/rc.conf, append the lines:
+sysrc xrdp_enable="YES"
+sysrc xrdp_sesman_enable="YES"
+
+Create file ~/startwm.sh with content:
+exec ck-launch-session startplasma-x11
+
+chmod +x ~/startwm.sh
+
+I connect to the VM in graphical user interface mode using xfreerdp:
+xfreerdp /u:administrator /w:960 /h:1020 /v:192.168.122.6 /video /sound:sys:pulse /rfx /network:lan /gfx /dynamic-resolution /bpp:32
+
+pkg install firefox
 </pre>
 
 ## Client
