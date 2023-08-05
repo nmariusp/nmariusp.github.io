@@ -50,21 +50,23 @@ cd kdesrc-build
 # Press enter when asked "Update your ~/.bashrc? (y/N)".
 mv ~/.config/kdesrc-buildrc .
 # Edit the file ~/kde5/src/kdesrc-build/kdesrc-buildrc:
-# A. replace "/home/username/kde/src/kdesrc-build" with "".
-# sed -i
+# A. replace "/home/username/kde5/src/kdesrc-build/" with "".
+# TODO: sed -i
 
-# B. replace "~/kde" with "~/kde5".
+# B. replace "~/kde/" with "~/kde5/".
+# TODO: sed -i
 
 # git ignore the file ~/kde5/src/kdesrc-build/kdesrc-buildrc
-echo kdesrc-buildrc >> .git/exclude
+echo kdesrc-buildrc >> .git/info/exclude
 
 # The same for kdesrc-build kf6-qt6
+cd
 mv ~/kde6 ~/kde6~bak
 cp -r ~/kde5 ~/kde6
+cd ~/kde6/src/kdesrc-build
 
-# Edit the file ~/kde6/src/kdesrc-build/kdesrc-buildrc:
-# A. replace "5" with "6".
-# sed -i
+# Edit the file ~/kde6/src/kdesrc-build/kdesrc-buildrc and replace "5" with "6".
+# sed -i 's/5/6/g' kdesrc-buildrc
 </pre>
 
 `Step 4.` Install enough binary packages from your Linux OS such that you can build KDE Frameworks 5 and KDE Frameworks 6 using kdesrc-build.
@@ -90,6 +92,7 @@ cd ~/kde6/src/kdesrc-build
 ./kdesrc-build frameworks
 </pre>
 
+<pre>
 
 
 
@@ -108,16 +111,27 @@ cd ~/kde6/src/kdesrc-build
 
 
 
-
+</pre>
 
 # Advanced topics
 
-## Cannot install kdesrc-build on Alpine Linux
+## Alpine Linux - "kdesrc-build --initial-setup" fails
 
 <pre>
 doas apk add doas-sudo-shim perl
 </pre>
 
+## Alpine Linux - packages to install for kdesrc-build
+
+<pre>
+# For kdesrc-build
+doas apk add ninja
+# For KDE Frameworks
+# For kjs
+doas apk add pcre-dev
+</pre>
+
+<pre>
 
 
 
@@ -131,12 +145,18 @@ doas apk add doas-sudo-shim perl
 
 
 
+
+
+
+
+
+</pre>
 
 # TODO: delete everything starting from here
 
 # Ignore everything below
 
-#Page https://community.kde.org/Get_Involved/development/Set_up_a_development_environment
+# 1. Page https://community.kde.org/Get_Involved/development/Set_up_a_development_environment
 
 ## Set up a development environment
 
@@ -222,7 +242,7 @@ You'll want to disable indexing for your development-related git repos and the f
 == Next Steps ==
 '''Reboot your computer''' and log back in so the package changes, and the <code>~/.bashrc</code> changes take effect on your user account. Once that's done, your development environment is set up and ready to build software. Time to learn how to use <code>kdesrc-build</code> tool to [[Get_Involved/development/Build_software_with_kdesrc-build|manage and build software from source code]]!
 
-# Page https://community.kde.org/Get_Involved/development/Build_software_with_kdesrc-build
+# 2. Page https://community.kde.org/Get_Involved/development/Build_software_with_kdesrc-build
 
 ## Build software with kdesrc-build
 
@@ -360,7 +380,7 @@ kdesrc-run kcalc
 Now you can compile anything in KDE from its source code! Time to think about [[Get_Involved/development#Choose what_to_work_on|what to do with this superpower]]...
 
 
-# Page https://community.kde.org/Get_Involved/development/More
+# 3. Page https://community.kde.org/Get_Involved/development/More
 
 ## More
 
@@ -1050,7 +1070,7 @@ end module
 
 === gpgme fails to build ===
 
-# Page https://community.kde.org/Get_Involved/development/IDE_configuration/Qt_Creator
+# 4. Page https://community.kde.org/Get_Involved/development/IDE_configuration/Qt_Creator
 
 Qt Creator is an IDE from Qt.
 
@@ -1197,7 +1217,7 @@ From the main menu Debug > Step Over (F10)/Step Into(F11)/Step Out (Shift+F11).
 
 Enabling parallel jobs allows the compiler to utilize multiple processor cores simultaneously, significantly improving the compilation speed, especially for larger projects. By distributing the compilation tasks across multiple threads, the overall build time can be reduced, leading to a more efficient development workflow.
 
-# Page https://community.kde.org/Get_Involved/development/Install_the_dependencies
+# 5. Page https://community.kde.org/Get_Involved/development/Install_the_dependencies
 
 If you have any trouble getting things to build due to missing 3rd-party package dependencies, read on to learn what to do. If you need help, see https://community.kde.org/Get_Involved#Getting_in_Touch_and_Working_Together.
 
@@ -1242,7 +1262,7 @@ the part between the parenthesis ''KF5KIO'' is going to be in the error message 
 
 Any other dependencies can be figured out and installed as you continue building the modules one by one.
 
-# Page https://community.kde.org/Get_Involved/development
+# 6. Page https://community.kde.org/Get_Involved/development
 
 [[File:Mascot konqi-app-dev.png|right|x250px|]]
 By joining the ranks of KDE developers, you will get to implement new features and defeat bugs both daunting and simple, all while collaborating to make coherent and stable releases. Developers collaborate in teams based on what area they are working in. These can be small teams working on a single application, up to large teams working on a group of related pieces of software. Many developers are in more than one team.
