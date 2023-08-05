@@ -1,0 +1,1100 @@
+<script src="https://rawcdn.githack.com/oscarmorrison/md-page/master/md-page.js"></script><noscript>
+
+# kdesrc-build procedure
+
+External resources https://community.kde.org/Get_Involved/development and https://community.kde.org/Special:PrefixIndex?prefix=Get_Involved%2Fdevelopment&namespace=0
+
+If you want to build the latest KDE source code from git, you want to use kdesrc-build.
+
+# Short version
+
+This will allow you to read from the KDE git repositories, i.e. to build software. In order to write to the KDE git repositories additional steps are required.
+
+Steps:
+
+`Step 1.` Set up kdesrc-build for Qt5. You only need to set up kdesrc-build once. You can use the ensuing kdesrc-build installation for months.
+
+`Step 1.1.` Use a Linux operating system (OS) that is better supported by kdesrc-build. I.e. a Linux OS for which "kdesrc-build --initial-setup" has support and a Linux OS that uses the KDE Plasma desktop and has new packages. Alphabetic list of such Linux OSes: Arch, latest Fedora KDE Spin, KDE neon, latest Kubuntu, openSUSE Tumbleweed.
+
+If you cannot run the Linux OS on a hardware computer, use a Virtual Machine (VM).
+
+Minimum hardware requirements: 300 GB SSD, 6 GB RAM, 4 CPU threads or virtual CPUs (vCPUs). Recommended 10 GB RAM, 8 CPU threads.
+
+The command line instructions might be specific for different families of Linux OSes. The families of Linux OSes are: Debian (Ubuntu, Kubuntu, KDE neon), Arch (Manjaro, EndeavourOS). When we provide a command line for Debian, that command line is valid for the entire Debian family of Linux OSes.
+
+Please make sure the `sudo` command works correctly in your Linux OS installation.
+
+`Step 1.2.`
+
+Arch: <pre>sudo pacman -S git</pre>
+Debian: <pre>sudo apt update && sudo apt install git</pre>
+Fedora: <pre>sudo dnf install git</pre>
+openSUSE: <pre>sudo zypper install git</pre>
+
+`Step 1.3.`
+
+<pre>
+# Make a backup:
+mv ~/.config/kdesrc-buildrc ~/.config/kdesrc-buildrc~bak ; mv ~/kde ~/kde~bak
+</pre>
+
+# Ignore everything below
+
+## Set up a development environment
+
+{{Info|'''Everything on this page only needs to be done once.''' Once you've done it, your development environment is set up and you can use it to submit patches and develop KDE Software!}}
+
+{{Note|This procedure will set up kdesrc-build for Qt5 and KDE Frameworks 5.<br/>
+Setting up kdesrc-build for Qt6 and KDE Frameworks 6 and setting up kdesrc-build inside a Docker container are [[Get_Involved/development/More|advanced topics]].}}
+
+Source code for KDE software lives on [https://invent.kde.org KDE Invent]. But before you can work on it, you'll need to set up a '''development environment''': a set of tools that allows you to access and edit the source code, compile it into a form that the computer can run, and deploy it to a safe location. We will now go through the process of setting one up. To accomplish these tasks, you will need to enter commands using a terminal program, such as KDE's [https://apps.kde.org/konsole Konsole].
+
+If you're not familiar with the command line interface, you can [[Get_Involved/development/Learn#Unix_command_line|find tutorials here]]. However, advanced command-line skills are not required, and you will learn what you need along the way!
+
+If you're a visual learner, video tutorials can be found [[Get_Involved/development/Video|here]].
+
+== Install basic tools ==
+First you will need to use your operating system's package manager to install some basic tools:
+* KDE Neon/Kubuntu/Ubuntu/Debian: <code>sudo apt install git cmake</code>
+* Arch/Manjaro: <code>sudo pacman -S git cmake dialog extra-cmake-modules</code>
+* Fedora: <code>sudo dnf install git cmake perl perl-IPC-Cmd perl-MD5 perl-FindBin</code>
+* openSUSE Leap & Tumbleweed: <code>sudo zypper install git breezy cmake dialog</code>
+
+== Configure Git ==
+We need to set your authorship information properly so that any changes you make can be properly attributed to you:
+{{Input|1=<nowiki>
+git config --global user.name "Your Name"
+git config --global user.email "you@email.com"
+</nowiki>}}
+
+The name you provide should be your actual name, not your KDE Identity username or a pseudonym. And the email address must be the same as the email address used for your https://bugs.kde.org account. If they don't match, then the <code>BUG: </code> and <code>FEATURE: </code> keywords won't work (see [https://techbase.kde.org/Development/Git/Configuration#Basic_Settings this page] for more information).}}
+
+Next, in order to authenticate yourself when pushing code changes, you need to add an ssh key to your GitLab profile as [https://invent.kde.org/help/user/ssh.md described here].
+
+== Set up kdesrc-build ==
+<code>kdesrc-build</code> is the official KDE meta-build-system tool. It is used to manage the building of many software repositories in an automated fashion. Its primary purpose is to '''manage dependencies'''. Every software has dependencies: other pieces of software that provide lower-level functionality they rely on. In order to compile any piece of software, its dependencies must be available. KDE software has two types of dependencies: dependencies on other pieces of KDE software, and dependencies on 3rd-party software. E.g. the KDE application KCalc depends on more than 20 other KDE git repositories. Also, KCalc depends on the Qt framework and on the libraries GNU GMP and GNU MPFR.
+
+Because most Linux operating systems do not provide development packages of the KDE Frameworks 5 and of other KDE libraries that are up-to-date enough for us to build from the "master" branch of the KDE git repositories, we use <code>kdesrc-build</code> to compile the needed KDE Frameworks and KDE libraries ourselves. The goal is to avoid using KDE binaries, KDE libraries and other KDE files from the operating system (i.e. the /usr directory).
+
+Let's set it up now! First, create a new directory for all the KDE source code. You will need many gigabytes of free disk space. Budget 50 GB for KDE Frameworks + KDE Plasma, and 10-30 GB more for some apps as well. Then clone the <code>kdesrc-build</code> git repository in that directory:
+
+{{Input|1=<nowiki>
+mkdir -p ~/kde/src
+cd ~/kde/src/
+git clone https://invent.kde.org/sdk/kdesrc-build.git && cd kdesrc-build
+</nowiki>}}
+
+Next, some distros need source repos enabled before you can install the development packages you need. Do that now, if needed:
+
+* '''KDE neon/Debian/Ubuntu/Kubuntu/etc:''' <code>sudo sed -i '/deb-src/s/^# //' /etc/apt/sources.list && sudo apt update</code>
+* '''openSUSE Leap & Tumbleweed:''' <code>sudo zypper mr -e $(zypper repos | awk '/source/{print $5}')</code>
+
+With that done, it's time to run the initial setup program, which will make some changes to your <code>~/.bashrc</code> (or  <code>~/.zshrc</code> for zsh users) and install necessary 3rd-party packages:
+
+{{Input|1=<nowiki>
+./kdesrc-build --initial-setup
+source ~/.bashrc
+</nowiki>}}
+
+{{Note|If you use the zsh shell and you have selected yes for auto-completions during the initial setup for <code>kdesrc-build</code>, add the following two lines to the configuration file <code>~/.zshrc</code> if the lines do not exist in the file.
+<pre>
+autoload -U +X compinit && compinit
+autoload -U +X bashcompinit && bashcompinit
+</pre>
+}}
+
+For more details about 3rd-party dependencies, see [[Get_Involved/development/Install_the_dependencies]]
+
+{{Note|This process installs 3rd-party dependencies once, but they can change over time, and <code>kdesrc-build</code> is currently not smart enough to track those changes and apply them later; see https://invent.kde.org/sdk/kdesrc-build/-/issues/9 for more details. So if in the future, you happen to find any external dependencies needed to build KDE software that were not installed with <code>kdesrc-build --initial-setup</code>, then once you finish this tutorial, please send a merge request to https://invent.kde.org/sdk/kdesrc-build/-/blob/master/modules/ksb/FirstRun.pm in order to include the needed packages to the list.}}
+
+== Set up Qt ==
+Qt is the fundamental framework that is needed for pretty much all KDE development. A recent enough version of Qt is required to proceed.
+
+You can look up the version of the Qt framework installed on your operating system by opening the application "Info Center" (KInfoCenter) > Basic Information > About this System > "Qt Version:"
+
+If Qt 5.15 or later is installed, you're already done done with this step and can proceed to the next section! 🎉
+
+...Otherwise it's time to compile a more recent version of Qt using <code>kdesrc-build</code>. See [[Get_Involved/development/More#Build_Qt_using_kdesrc-build|Building Qt using kdesrc-build]] to learn how. If you're just getting started with development, it may be a good time to switch distros to something [[Get_Involved/development#Operating_system|better suited for building KDE software from source code]] either as the primary operating system or in a virtual machine. But if you are an advanced user, feel free to compile your own Qt.
+
+== Disable indexing for your development environment ==
+You'll want to disable indexing for your development-related git repos and the files they will build and install. Add <tt>~/kde</tt> to the exclusions list in System Settings > Workspace > Search > File Search, like so:
+
+[[File:Getting involved development file index options.png|center|600px|]]
+
+== Next Steps ==
+'''Reboot your computer''' and log back in so the package changes, and the <code>~/.bashrc</code> changes take effect on your user account. Once that's done, your development environment is set up and ready to build software. Time to learn how to use <code>kdesrc-build</code> tool to [[Get_Involved/development/Build_software_with_kdesrc-build|manage and build software from source code]]!
+
+## Build software with kdesrc-build
+
+On this page, you can learn how to use KDE's <code>kdesrc-build</code> tool to build various types of KDE software once you have a [[Get_Involved/development/Set_up_a_development_environment|development environment set up]].
+
+It can take an hour or more to compile a KDE application, Framework, or Plasma itself for the first time. The reason for this is that <code>kdesrc-build</code> is compiling all of the KDE Frameworks 5 modules plus any other KDE module that is a dependency of the module that you tell <code>kdesrc-build</code> to build.
+
+<code>kdesrc-build</code> by default has the option "--include-dependencies" enabled so it will ignore all KDE packages that were installed using the distribution's package manager and will instead build all needed KDE modules from source.
+
+The next time you want to compile that or any other piece of KDE software, it will be much faster since most of the dependencies will have already been compiled. If you don't want to build all dependencies (e.g., because you are using a rolling release distro that provides recent versions of software), edit the same configuration file and simply set <code>include-dependencies</code> to '''false''' or add the <code>--no-include-dependencies</code> option when running <code>kdesrc-build</code>.
+
+== Frameworks ==
+'''[[Frameworks|KDE Frameworks]]''' are libraries of tools and features that can be used by any application or Plasma itself. New versions of KDE Frameworks are [[Schedules/Frameworks|released once a month]]. A list of all of the frameworks can be found here: https://api.kde.org/frameworks.
+
+Usually there is no reason to build frameworks manually, by using the "--include-dependencies" option the necessary ones are included automatically.
+
+== Applications ==
+
+[https://apps.kde.org/ KDE Applications] like [https://apps.kde.org/kcalc Calculator (KCalc)], [https://apps.kde.org/dolphin/ Dolphin], [https://apps.kde.org/okular/ Okular], [https://apps.kde.org/konsole/ Konsole] and [https://apps.kde.org/gwenview/ Gwenview] are standalone apps that can be run on multiple platforms, such as Plasma, GNOME, even macOS and Windows! New versions of KDE Applications are [[Schedules#Current_Releases_by_KDE|released three times a year]]. Note that the Discover app store (git repo name: <code>plasma-discover</code>) and System Settings app (git repo name: <code>systemsettings</code>) are distributed alongside Plasma, but they build like apps using the below instructions. A list of all KDE applications can be found here: https://apps.kde.org/.
+
+The general steps required to build and run an application are described in the following using KCalc as an example:
+
+{{Input|1=<nowiki>
+kdesrc-build kcalc
+</nowiki>}}
+
+This command clones the KDE git repository https://invent.kde.org/utilities/kcalc in the directory <code>~/kde/src/kcalc</code>, builds all of KCalc's KDE dependencies, and then builds KCalc itself, into the directory <code>~/kde/build/kcalc</code>. If the build is successful, the result is installed into <code>~/kde/usr</code>. As a result, '''there is no need to manually install anything;''' <code>kdesrc-build</code> installed it for you!
+
+To run it, use the <code>kdesrc-run</code> command, which launches the built-from-source version instead of the one installed by your system's package manager.
+{{Input|1=<nowiki>
+kdesrc-run kcalc
+</nowiki>}}
+
+Did it run? If so, then '''congratulations, you just compiled your own version of KCalc from source code!'''
+
+== Plasma ==
+'''[[Plasma|KDE Plasma]]''' is the environment in which you can run apps. Plasma is responsible for providing a desktop with wallpaper, app launchers, and widgets; displaying notifications; managing wired and wireless networks; and similar operating-system level tasks. New versions of Plasma are [[Schedules/Plasma 5|released three times a year]]. Plasma has multiple ''shells'': [https://kde.org/plasma-desktop Plasma Desktop] for desktop, laptop, and 2-in-1 computers, [https://www.plasma-mobile.org/ Plasma Mobile] for mobile phones, [https://plasma-bigscreen.org/ Plasma Bigscreen] for televisions, and so on. They all share certain common components, such as a window manager, networking stack, basic graphical components, and so on. Here is how to build the common components:
+{{Input|1=<nowiki>
+kdesrc-build plasma-workspace plasma-framework plasma-integration bluedevil powerdevil plasma-nm plasma-pa plasma-thunderbolt plasma-vault plasma-firewall plasma-workspace-wallpapers kdeplasma-addons krunner milou kwin kscreen sddm-kcm plymouth-kcm breeze discover print-manager plasma-sdk kdeconnect-kde plasma-browser-integration xdg-desktop-portal-kde kde-gtk-config kgamma5 breeze-gtk drkonqi phonon flatpak-kcm kactivitymanagerd --include-dependencies
+</nowiki>}}
+
+=== Plasma Desktop ===
+To build the Plasma Desktop environment and its related apps, also build the following:
+{{Input|1=<nowiki>
+kdesrc-build plasma-desktop systemsettings plasma-disks plasma-systemmonitor ksystemstats kinfocenter kmenuedit --include-dependencies
+</nowiki>}}
+
+To get translations in your self-built Plasma, you must build <tt>plasma-workspace</tt> with <code>-DKDE_L10N_SYNC_TRANSLATIONS=true</code>. The easiest way to do this is go into the build directory (<code>~/kde/build/plasma-workspace</code> by default), run <code>ccmake .</code>, turn on that setting, and then rebuild the project.
+
+Now it's time to make your built-from-source Plasma session accessible from the SDDM login screen, and also copy the built-from-source DBus files into a location where they are visible to the system bus. To do this, run the following command:
+{{Input|1=<nowiki>
+~/kde/build/plasma-workspace/login-sessions/install-sessions.sh
+</nowiki>}}
+
+{{Note|SELinux can interfere with the new DBus services working correctly, and the path of least resistance may be to simply turn off enforcement if you are using a distro that ships with it on by default (for example, Fedora). To do this, set the value of <code>SELINUX</code> to <code>permissive</code> in the file <code>/etc/selinux</code>.}}
+
+After this, you can log out and select your new plasma session in SDDM's session chooser menu (which is located in the bottom-left corner of the screen if you're using the Breeze SDDM theme).
+
+Alternatively, you can run the new version of plasma on top of your existing system for quick testing like so:
+{{Input|1=<nowiki>
+source ~/kde/build/plasma-desktop/prefix.sh
+~/kde/usr/bin/plasmashell --replace
+</nowiki>}}
+
+=== Plasma Mobile ===
+To build the Plasma Mobile environment, also build the following:
+{{Input|1=<nowiki>
+kdesrc-build plasma-nano plasma-mobile plasma-settings --include-dependencies
+</nowiki>}}
+
+You can run your custom-built Plasma Mobile in an emulated phone session using a phone-sized window within your existing desktop. Note that you probably want that this emulated phone session does not use the settings of your current user. E.g. you want in the emulated phone session to use Angelfish, not Mozilla Firefox as your web browser. Instructions:
+
+{{Input|1=<nowiki>
+export XDG_RUNTIME_DIR=/tmp/
+export QT_QPA_PLATFORM=wayland
+export QT_QPA_PLATFORMTHEME=KDE
+export QT_WAYLAND_DISABLE_WINDOWDECORATION=1
+export XDG_CURRENT_DESKTOP=KDE
+export KSCREEN_BACKEND=QScreen
+export KDE_FULL_SESSION=1
+export KDE_SESSION_VERSION=5
+export QT_QUICK_CONTROLS_MOBILE=1
+export PLASMA_PLATFORM=phone:handheld
+export $(dbus-launch)
+dbus-run-session kwin_wayland --width 360 --height 720 --xwayland "plasmashell -p org.kde.plasma.phoneshell"
+</nowiki>}}
+
+Alternative instructions for starting an emulated phone session.
+
+{{Input|1=<nowiki>
+export QT_WAYLAND_DISABLE_WINDOWDECORATION=1
+export QT_QUICK_CONTROLS_MOBILE=1
+export PLASMA_PLATFORM=phone:handheld
+
+QT_QPA_PLATFORM=wayland dbus-run-session kwin_wayland --xwayland "plasmashell -p org.kde.plasma.phoneshell" --width 360 --height 720
+</nowiki>}}
+
+Plasma Mobile can also be run on a mobile device itself. For more information, see the [[Plasma/Mobile/DevGuide#Mobile_device_running_plasma_mobile|DevGuide]].
+
+== How to solve build problems ==
+Did one or more modules fail to build (displayed in red font) using <code>kdesrc-build</code>? Then here's what to do:
+
+# Try building the failing module again from scratch using <code>kdesrc-build [failing module] --refresh-build</code>
+# Make sure that you have all the dependencies for the failing module. Go back to the [[#Download non-KDE dependencies]] section and re-install the non-KDE dependencies. If that doesn't fix the problem, open the log file for the failing module which <code>kdesrc-build</code> will print the path at the end of its output. Scroll to the bottom of the log file and read the output to see what missing dependency it is complaining about. Then find and install the corresponding package using the package manager of your distribution. If several look relevant, install them all just to be safe. When you have the necessary dependencies, you can save time and resume from the failing module by adding <code>--resume-from [the name of the module that failed]</code> to your <code>kdesrc-build</code> command.
+# <s>Check the [https://build.kde.org/view/Failing/ list of currently broken modules] on the KDE build server.</s> The link is broken. But you can check the pipeline for individual project. If it's broken there, then it's not your fault. :)
+# Ask for help in the the [https://webchat.kde.org/#/room/#kde-devel:kde.org #kde-devel] channel on [[Matrix]] or Libera Chat [[Internet Relay Chat | IRC]]. See [[Get Involved/development#Communicate with the team]]
+# Looking into the error log is also helpful. For example, the build stopped at kwallet. You will need to go into <code>kde/src/log/latest/kwallet/error.log</code> and find what packages are missing.
+# If you know what files are missing, but you don't know what packages provide them, you can ask your package manager. See https://wiki.archlinux.org/index.php/Pacman/Rosetta (see "Query the package which provides FILE").
+# The problem might be in <code>~/kde/usr</code>. E.g. a file in <code>~/kde/usr/include</code> which was renamed or moved. You can help yourself by seeing if you can reproduce this issue in a clean new Virtual Machine (VM). If you cannot reproduce the issue in your VM, then a possible solution is to start with a new and clean kdesrc-build installation. I.e. run something like <code>mv ~/.config/kdesrc-buildrc ~/.config/kdesrc-buildrc~bak ; mv ~/kde ~/kde~bak</code>. Then install kdesrc-build from scratch using this wiki page.
+
+== Iterating on a single project ==
+When you're working on a project and you want to rebuild it to test your changes, you can save a lot of time by only rebuilding that project, rather than the entire stack. For example if you are working on <code>plasma-desktop</code>, you can rebuild only that project rather than everything by running <code>kdesrc-build --no-src --no-include-dependencies plasma-desktop</code>.
+
+== How to run an application after making changes to one of its dependencies ==
+Build the application that you want to build. E.g. to return to KCalc:
+{{Input|1=<nowiki>
+kdesrc-build kcalc
+</nowiki>}}
+
+This command builds not only KCalc, but all of the KDE git repositories on which it depends, such as the KDE Frameworks 5 library KConfig.
+
+Now let's say you want to make a change to KConfig that should change a behavior in KCalc. In this case, you don't want kdesrc-build to discard your changes to KConfig. So first build KConfig separately, on its own, without doing a source code update:
+{{Input|1=<nowiki>
+kdesrc-build kconfig --no-src --no-include-dependencies --refresh-build --debug
+</nowiki>}}
+
+This will build just KConfig and install the needed build products into <code>~/kde/usr</code>. Now we want to run KCalc in such a way that it makes use of those changed files. Do it like so:
+
+{{Input|1=<nowiki>
+kdesrc-build kcalc --no-src --no-include-dependencies --refresh-build --debug
+kdesrc-run kcalc
+</nowiki>}}
+
+== Next Steps ==
+Now you can compile anything in KDE from its source code! Time to think about [[Get_Involved/development#Choose what_to_work_on|what to do with this superpower]]...
+
+## More
+
+This page is the continuation with more advanced topics of the page [[Get_Involved/development]].
+
+This page is not meant for people that are starting to program for KDE.
+
+== Develop in a Linux container ==
+
+When you start programming for KDE, it is recommended that you [[Get_Involved/development|use kdesrc-build in your main operating system or in a virtual machine]] running on a rolling-release Linux distribution (Arch, openSUSE Tumbleweed, KDE neon) or running on e.g. the latest version of Fedora KDE Spin or Kubuntu.
+
+As an alternative, you can run kdesrc-build in a Linux container (docker, podman, toolbx, distrobox).
+
+=== Option 1. The KDE PIM Docker image ===
+
+You can install Docker and the [[KDE PIM/Docker|KDE PIM Docker image]]. It provides a development environment that is isolated from your day-to-day system. It is based on KDE Neon Unstable.
+
+=== Option 2. distrobox ===
+
+Or, you can just create a long lived (pet not cattle) container using distrobox and podman (or docker). See https://www.youtube.com/watch?v=9JEALbcmcCg and https://github.com/89luca89/distrobox to learn more about distrobox and how to use it in general.
+
+First, install distrobox and podman from your distribution repositories. Then run:
+
+{{Input|
+distrobox enter
+}}
+
+This should create a container based on your current Linux OS and enter it. It is preferable to use one of the Linux distributions that is better suited for kdesrc-build, as mentioned [[Get_Involved/development#Operating_system|in this wiki page]], so if your distribution does not provide very up-to-date packages, you can download and use a different container image for your distrobox from [https://hub.docker.com/search?type=image Dockerhub]. For example, with openSUSE Tumbleweed:
+
+{{Input|
+podman pull opensuse/tumbleweed
+distrobox create --image opensuse/tumbleweed --name tumbleweed
+distrobox enter tumbleweed
+}}
+
+Then it's a matter of downloading and running kdesrc-build as detailed in [[Get_Involved/development/Set_up_a_development_environment]]:
+
+{{Input|<nowiki>
+mkdir -p ~/kde/src
+cd ~/kde/src
+git clone https://invent.kde.org/sdk/kdesrc-build.git
+./kdesrc-build --initial-setup
+source ~/.bashrc
+</nowiki>}}
+
+From this point on, one important thing to bear in mind is that a distrobox container is transparent in its user space and containerized in its root space: when you are inside a distrobox container, you can see the content of system's home folder, but not your system's root folders, only the container's root folders. This means that you can install packages inside the container using root privileges and access those packages to compile your programs stored in your home, without ever installing those packages in your actual system!
+
+You can take advantage of this by installing, for instance, Qt development packages used for kdesrc-build from inside the container. This way, it is not necessary to compile Qt with kdesrc-build. This is particularly convenient if you want to compile KDE software with Qt6 quickly.
+
+Likewise, you should [https://community.kde.org/Get_Involved/development/Install_the_dependencies install the required dependencies] from inside the distrobox rather than from your system's repositories. Then you can start compiling as usual.
+
+After compiling your program with kdesrc-build from inside the distrobox, you can run it with <code>kdesrc-build run</code>, and despite it originating from inside a container and using the libraries from the container, it will run just fine as a GUI application on your system!
+
+The only few gotchas to using this method are:
+
+* You cannot use a [[Get_Involved/development/Build_software_with_kdesrc-build#Plasma|full Plasma Desktop session]] made from git.
+* You will need qqc2-desktop-style and Breeze to show the correct theme for your applications.
+* You will need the QtWayland library and its respective development package to run your applications natively on a Wayland session.
+
+== Other operating systems ==
+
+=== FreeBSD ===
+
+Install the latest release of FreeBSD with KDE Plasma Desktop on your hardware computer or in a virtual machine.
+
+Your user should be member of the "wheel" user group (e.g. this can be configured in the FreeBSD installer, when creating your user you can select additional user groups for your user). Your user should be able to use sudo:
+
+<pre>
+pkg install sudo
+visudo
+# Uncomment the line: %wheel ALL=(ALL:ALL) ALL
+</pre>
+
+Then set up kdesrc-build using the same procedure as when installing kdesrc-build on a Linux operating system. FreeBSD is currently supported by kdesrc-build. See https://www.youtube.com/watch?v=v2wq0eTnUuc https://www.youtube.com/watch?v=MT-AN4J-hn8
+
+=== Microsoft Windows ===
+
+You can build and develop KDE projects using the [[Get_Involved/development/Windows|Microsoft Windows]] operating system.
+
+=== Apple macOS ===
+
+You can build and develop KDE projects using the [[Get_Involved/development/Mac|Apple macOS]] operating system.
+
+== What to do if CMake configure fails because a build dependency is missing ==
+
+If you run kdesrc-build in order to build a KDE git repository. And if building fails with a CMake error. Then, that is most often caused by the fact that you do not have installed some binary packages from your Linux OS.
+
+See below for some ideas about how to find out what Linux packages you need to install.
+
+=== Debian/Kubuntu/KDE neon ===
+
+E.g. I am on Kubuntu 22.10, <code>kdesrc-build frameworks</code> fails, module <code>kcoreaddons</code> has CMake (configure) error <code>Could NOT find Qt6LinguistTools (missing: Qt6LinguistTools_DIR)</code>.
+
+Option 1:
+
+Search on the internet for <code>ubuntu packages Qt6LinguistTools</code> it returns https://packages.ubuntu.com/kinetic/amd64/qt6-tools-dev Expand "amd64 [list of files]": <code>/usr/lib/x86_64-linux-gnu/cmake/Qt6LinguistTools/Qt6LinguistToolsConfig.cmake</code>
+
+{{Input|1=<nowiki>
+sudo apt install qt6-tools-dev
+</nowiki>}}
+
+Option 2:
+{{Input|1=<nowiki>
+sudo apt install apt-file
+sudo apt-file update
+apt-file find Qt6LinguistToolsConfig.cmake
+# qt6-tools-dev: /usr/lib/x86_64-linux-gnu/cmake/Qt6LinguistTools/Qt6LinguistToolsConfig.cmake
+sudo apt install qt6-tools-dev
+</nowiki>}}
+
+If the error is:
+{{Input|1=<nowiki>
+The imported target "Qt6::qtwaylandscanner" references the file
+     "/usr/lib/qt6/libexec/qtwaylandscanner"
+but this file does not exist.
+</nowiki>}}
+
+Then:
+{{Input|1=<nowiki>
+apt-file find /usr/lib/qt6/libexec/qtwaylandscanner
+# qt6-wayland-dev-tools: /usr/lib/qt6/libexec/qtwaylandscanner
+sudo apt install qt6-wayland-dev-tools
+</nowiki>}}
+
+Option 3:
+{{Input|1=<nowiki>
+apt search linguist | grep qt6
+# linguist-qt6/kinetic 6.3.1-2 amd64
+sudo apt install linguist-qt6
+</nowiki>}}
+
+More examples:
+{{Input|1=<nowiki>
+# Error "Could not find OsmTools (missing: OSMCONVERT_EXECUTABLE
+apt-file search -i OSMCONVERT
+# Returns "osmctools: /usr/bin/osmconvert".
+sudo apt install osmctools
+</nowiki>}}
+
+<pre>
+# Error "Program doxygen found: NO
+# doc/meson.build:6:0: ERROR: Program 'doxygen' not found or not executable"
+apt-file search doxygen | grep "/doxygen$"
+#doxygen: /usr/bin/doxygen
+#polymake-common: /usr/share/polymake/scripts/doxygen
+sudo apt install doxygen
+</pre>
+
+=== Fedora ===
+
+<code>sudo dnf provides "NameOrPathOfFileThatIsMissing"</code>
+
+See https://invent.kde.org/redstrate/cmake-package-installer/-/blob/master/src/main.rs
+
+E.g. if the error is:
+<pre>
+Failed to find required Qt component "LinguistTools".
+
+Expected Config file at
+"/lib64/cmake/Qt6LinguistTools/Qt6LinguistToolsConfig.cmake" does NOT exist
+</pre>
+
+run:
+<pre>
+dnf provides Qt6LinguistToolsConfig.cmake
+# Error: No matches found. If searching for a file, try specifying the full path
+# or using a wildcard prefix ("*/") at the beginning.
+
+dnf provides */Qt6LinguistToolsConfig.cmake
+# qt6-qttools-devel-6.5.1-1.fc38.i686 : Development files for qt6-qttools
+# Repo        : updates
+# Matched from:
+# Filename    : /usr/lib/cmake/Qt6LinguistTools/Qt6LinguistToolsConfig.cmake
+</pre>
+
+== Advanced kdesrc-build ==
+
+After you have edited a git repository and you want to build it, <code>--no-src</code> will make sure that <code>kdesrc-build</code> does not overwrite your changes with the latest source code from the official git repository (remote "origin" / https://invent/kde.org).
+
+<code>--no-include-dependencies</code> only builds the git repository that you give as parameter to <code>kdesrc-build</code>.
+
+<code>--debug</code> shows verbose output.
+
+<code>--refresh-build</code> forces a rebuild (not an incremental build) and a full reinstall.
+
+E.g. you have edited kcalc. You run:
+<pre>
+kdesrc-build kcalc --no-src --no-include-dependencies --refresh-build --debug |& tee ~/a.txt
+</pre>
+
+For details, see:
+<pre>
+kdesrc-build --help
+</pre>
+
+Note: the resources below might not be up to date.
+
+See the [https://docs.kde.org/trunk5/en/kdesrc-build/kdesrc-build/ kdesrc-build manual], [https://invent.kde.org/sdk/kdesrc-build/-/blob/master/README.md Readme #1], [https://invent.kde.org/sdk/kdesrc-build/-/blob/master/doc/README.md Readme #2], [https://invent.kde.org/sdk/kdesrc-build/-/blob/master/doc/source-reference/index.adoc Document #3] for more kdesrc-build information and options.
+
+== Build Qt using kdesrc-build ==
+
+Set up kdesrc-build from scratch as usual.
+
+Open the configuration file <code>~/.config/kdesrc-buildrc</code> and confirm that <code>qtdir</code> and the lines <code>include...qt5-build-include</code> and <code>include...custom-qt5-libs-build-include</code> are not commented out (i.e. there should not be a <code>#</code> in front of the lines). E.g. (replace "username" with your Linux user's name):
+
+{{Input|1=<nowiki>
+qtdir ~/kde/usr # Where to make install Qt5
+include /home/username/kde/src/kdesrc-build/qt5-build-include
+include /home/username/kde/src/kdesrc-build/custom-qt5-libs-build-include
+</nowiki>}}
+
+Run in a terminal:
+
+{{Input|1=<nowiki>
+kdesrc-build qt5-set
+kdesrc-build frameworks
+</nowiki>}}
+
+== kf5-qt5 vs. kf5-qt6 vs. kf6-qt6 ==
+
+For now, the KDE git repositories from https://invent.kde.org/frameworks and https://invent.kde.org/plasma/ can build correctly and run correctly using "kdesrc-build kf6-qt6".
+
+The KDE git repositories that can build correctly and run correctly using "kdesrc-build kf6-qt6" have two long lived git branches:
+
+* A long lived git branch that does not contain the deprecated symbols from kf5-qt5, named e.g. "master".
+* And another long lived git branch for qt5-kf5 and qt6-kf5, where the deprecated symbols still exist.
+
+What is "kf5-qt5"? You just set up kdesrc-build following the procedure. The resulting kdesrc-build installation will be of type kf5-qt5. In kdesrc-buildrc in the "global" section you will have "branch-group kf5-qt5". The git repositories that have only one long lived git branch e.g. named "master" will use that. The git repositories that have a second long lived git branch where the deprecated symbols still exist e.g. named "kf5" will use that.
+
+What is "kf5-qt6"? "kf5-qt6" is not supported and should not be used. You just set up kdesrc-build following the procedure. The resulting kdesrc-build installation will be of type kf5-qt5. In kdesrc-buildrc in the "global" section you will have "branch-group kf5-qt5", you keep this unchanged. You edit kdesrc-buildrc to make kdesrc-build use Qt6 instead of Qt5. The git repositories that have only one long lived git branch e.g. named "master" will use that. The git repositories that have a second long lived git branch where the deprecated symbols still exist e.g. named "kf5" will use that.
+
+What is "kf6-qt6"? You just set up kdesrc-build following the procedure. The resulting kdesrc-build installation will be of type kf5-qt5. In kdesrc-buildrc in the "global" section you will have "branch-group kf5-qt5", you replace that with "branch-group kf6-qt6". You edit kdesrc-buildrc to make kdesrc-build use Qt6 instead of Qt5. The git repositories that have only one long lived git branch e.g. named "master" will use that. The git repositories that have a second long lived git branch, will use the git branch where the deprecated symbols do not exist e.g. named "master".
+
+=== Why kdesrc-build kf6-qt6 cannot build and run neochat correctly? ===
+
+neochat does not have a second long lived git branch where the deprecated symbols do not exist.
+
+<code>kdesrc-build neochat</code> for kf6-qt6 succeeds, but then <code>kdesrc-run neochat</code> for kf6-qt6 fails because
+<pre>
+qrc:/RoomListContextMenu.qml:200:27: Invalid property assignment: unsupported type "QQuickIcon"
+Segmentation fault (core dumped)
+</pre>
+
+<pre>
+# The file ~/kde/src/neochat/src/qml/Menu/RoomListContextMenu.qml at line 200 says:
+Kirigami.BasicListItem {
+    text: i18n("Mark as Read")
+    icon: "checkmark"
+</pre>
+
+The symbol <code>Kirigami.BasicListItem.icon</code> of type string is deprecated and exists in kf5-qt5. In kf6-qt6 we use the symbol of type string <code>Kirigami.BasicListItem.icon.name</code>.
+
+== kdesrc-build, Qt6 and KDE Frameworks 6 ==
+
+=== Using kdesrc-buildrc-kf6-sample ===
+KDE projects are currently transitioning to use Qt6. You can build the in-development Qt6 versions using kdesrc-build by adjusting the .config/kdesrc-buildrc file. You can find a sample kdesrc-buildrc file [https://invent.kde.org/sdk/kdesrc-build/-/blob/master/kdesrc-buildrc-kf6-sample here].
+
+The important differences to Qt5 are:
+
+<code>branch-group kf6-qt6</code>: This will check out the correct git branches.
+
+<code>prefix ~/kde6/usr</code>: It is recommended to use a different prefix for Qt6-based builds than for the Qt5-based builds
+
+Save the file e.g. as <code>/home/user/kde6/kdesrc-buildrc</code>.
+
+Then you can use <code>kdesrc-build --rc-file=/home/user/kde6/kdesrc-buildrc ...</code> to build things against Qt6
+
+=== Editing ~/.config/kdesrc-buildrc ===
+
+Set up kdesrc-build following the "Set up kdesrc-build" procedure. The resulting kdesrc-build installation will be of type kf5-qt5. In kdesrc-buildrc in the "global" section you will have "branch-group kf5-qt5".
+
+Edit the file <code>~/.config/kdesrc-buildrc</code>
+* Replace all "5" with "6".
+* Replace:
+<pre>cmake-options -DCMAKE_BUILD_TYPE=RelWithDebInfo</pre>
+with:
+<pre>cmake-options -DCMAKE_BUILD_TYPE=RelWithDebInfo -DQT_MAJOR_VERSION=6 -DBUILD_WITH_QT6=ON</pre>
+
+== Packages needed by kdesrc-build kf6-qt6 ==
+
+"kdesrc-build --initial-setup" should install from your Operating System (OS) at least the packages that are needed for "kdesrc-build frameworks" to succeed.
+
+"kdesrc-build --initial-setup" by default sets up kdesrc-build kf5-qt5 and installs packages from your OS that are needed for kdesrc-build kf5-qt5.
+
+Below is the list of OS packages that kdesrc-build would install if it knew how to set up kdesrc-build kf6-qt6.
+
+* Debian/Ubuntu:
+<pre>
+sudo apt install qt6-tools-dev qt6-declarative-dev libqt6core5compat6-dev qt6-wayland qt6-wayland-dev qt6-wayland-dev-tools qt6-base-private-dev libqt6svg6-dev libqt6opengl6-dev libqt6shadertools6-dev doxygen xsltproc xmlto texinfo libcanberra-dev
+sudo apt build-dep appstream
+</pre>
+
+* openSUSE Tumbleweed: <code>sudo zypper in patterns-kde-devel_qt6 qt6-wayland-private-devel gobject-introspection-devel snowball-devel itstool libdisplay-info-devel</code>. For Plasma you will also need the following runtime dependency: <code>sudo zypper in qt6-qt5compat-imports</code>
+* Arch Linux: <code>sudo pacman -S poppler-qt6 qca-qt6 qt6-5compat qt6-base qt6-charts qt6-declarative qt6-multimedia qt6-multimedia-ffmpeg qt6-positioning qt6-tools qt6-translations qt6-wayland qt6-webchannel qt6-webengine qt6-websockets qt6-webview qtkeychain-qt6 qcoro-qt6 qt6-svg qt6-shadertools qt6-sensors</code>
+* Fedora: <code>sudo dnf install qt6-qtwebengine-devel qt6-qt5compat-devel qt6-qtbase-devel qt6-qtbase-private-devel qt6-qtdeclarative-devel qt6-qtlocation-devel qt6-qtmultimedia-devel qt6-qtpositioning-devel qt6-qtwayland-devel qt6-qttools qt6-qtshadertools-devel qt6-qtsensors-devel qt6-qtsvg-devel qt6-linguist qt6-qttools-devel qt6-qtwebsockets-devel expat-devel libcurl-devel libyaml-devel gtk-doc</code>
+* FreeBSD: <code>sudo pkg install qt6</code>
+
+== Build Qt6 using kdesrc-build ==
+
+A screen recording version is available https://www.youtube.com/watch?v=TDzX0376QyA
+
+Note: If you cannot build the KDE frameworks using kdesrc-build and using the Qt6 provided by your OS (Linux distribution). Because the Qt6 is not complete. You might want to build Qt6 using kdesrc-build.
+
+Note: Building Qt6 using kdesrc-build is an advanced topic.
+
+Set up kdesrc-build clean from scratch following the same procedure as when using "Qt5 and KDE Frameworks 5".
+
+Edit two files.
+
+<code>~/.config/kdesrc-buildrc</code>:
+
+<pre>
+# This file controls options to apply when configuring/building modules, and
+# controls which modules are built in the first place.
+# List of all options: https://docs.kde.org/trunk5/en/kdesrc-build/kdesrc-build/conf-options-table.html
+
+global
+    branch-group kf6-qt6
+
+    # Finds and includes *KDE*-based dependencies into the build.  This makes
+    # it easier to ensure that you have all the modules needed, but the
+    # dependencies are not very fine-grained so this can result in quite a few
+    # modules being installed that you didn't need.
+    include-dependencies true
+
+    # Install directory for KDE software
+    kdedir ~/kde6/usr
+
+    # Directory for downloaded source code
+    source-dir ~/kde6/src
+
+    # Directory to build KDE into before installing
+    # relative to source-dir by default
+    build-dir ~/kde6/build
+
+    qtdir  ~/kde6/usr # Where to install Qt6 if kdesrc-build supplies it
+
+    cmake-options -DCMAKE_BUILD_TYPE=Debug
+
+    # kdesrc-build sets 2 options which is used in options like make-options or set-env
+    # to help manage the number of compile jobs that happen during a build:
+    #
+    # 1. num-cores, which is just the number of detected CPU cores, and can be passed
+    #    to tools like make (needed for parallel build) or ninja (completely optional).
+    #
+    # 2. num-cores-low-mem, which is set to largest value that appears safe for
+    #    particularly heavyweight modules based on total memory, intended for
+    #    modules like qtwebengine
+    num-cores 15
+    num-cores-low-mem 4
+
+    # kdesrc-build can install a sample .xsession file for "Custom"
+    # (or "XSession") logins,
+    install-session-driver false
+
+    # or add a environment variable-setting script to
+    # ~/.config/kde-env-master.sh
+    install-environment-driver true
+
+    # Stop the build process on the first failure
+    stop-on-failure true
+
+    # Use a flat folder layout under ~/kde6/src and ~/kde6/build
+    # rather than nested directories
+    directory-layout flat
+
+    # Build with LSP support for everything that supports it
+    compile-commands-linking true
+    compile-commands-export true
+
+    git-repository-base qt6-copy https://invent.kde.org/qt/qt/
+end global
+
+# With base options set, the remainder of the file is used to define modules to build, in the
+# desired order, and set any module-specific options.
+#
+# Modules may be grouped into sets, and this is the normal practice.
+#
+# You can include other files inline using the "include" command. We do this here
+# to include files which are updated with kdesrc-build.
+
+# Common options that should be set for some KDE modules no matter how
+# kdesrc-build finds them. Do not comment these out unless you know
+# what you are doing.
+#include /home/username/kde6/src/kdesrc-build/kf6-common-options-build-include
+
+# Qt and some Qt-using middleware libraries. Uncomment if your distribution's Qt
+# tools are too old but be warned that Qt take a long time to build!
+include /home/username/kde6/src/kdesrc-build/qt6-build-include
+#include /home/username/kde6/src/kdesrc-build/custom-qt6-libs-build-include
+
+# KF6 and Plasma :)
+#include /home/username/kde6/src/kdesrc-build/kf6-qt6-build-include
+
+# To change options for modules that have already been defined, use an
+# 'options' block. See kf6-common-options-build-include for an example
+
+</pre>
+
+<code>~/kde/src/kdesrc-build/qt6-build-include</code>:
+
+<pre>
+# Downloads and installs Qt6 from the KDE mirror, using Qt6's CMake support
+# exclusively.  Consider this an unofficial build that won't be supported by Qt
+# upstream since we don't go through the init-repository script.
+# It is probably better to install from your local distribution devel packages
+# if possible!
+module-set qt6-set
+    override-build-system qt6 # technically optional for now
+
+    repository qt6-copy # as defined in kdesrc-buildrc-kf6-sample
+    branch     6.4
+
+    # install path. This *MUST* match your qtdir setting in kdesrc-buildrc!
+    prefix ${qtdir}
+
+    # These have been manually placed in dependency order based on the
+    # .gitmodules file in https://code.qt.io/cgit/qt/qt5.git/tree/.gitmodules
+    # in "essential" or "addons" categories with some additions
+    # qtdoc should be last to give it best opportunity to make needed docs
+    use-modules qtbase qttools qtshadertools qtdeclarative qtsvg \
+        qtimageformats qtmultimedia qtwayland                    \
+        qtwebsockets qtwebchannel qtwebengine qtwebview qtsensors            \
+        qtnetworkauth qt5compat qtdoc qtpositioning              \
+        qtlocation qtvirtualkeyboard qttranslations              \
+        qtlanguageserver
+
+    # if you want qtwebengine, add it to use-modules after "qtwebchannel" and
+    # comment this out. Note qtwebengine has significant and different build
+    # requirements of its own.
+    #ignore-modules qtwebengine
+
+    # Archiving API requires zstd support which may not be present in your CMake
+    cmake-options -DQT_BUILD_TESTS=FALSE -DCMAKE_BUILD_TYPE=RelWithDebInfo \
+                  -DQT_AVOID_CMAKE_ARCHIVING_API=TRUE
+
+    cmake-generator Ninja # comment out if you want the default CMake generator
+end module-set
+
+options qtwebengine
+    # qtwebengine build system is weird, involving make as the top-level driver
+    # and then calling ninja for the bulk of the build.  qtwebengine is a bulky
+    # module and having ninja use all cores at once may run out of memory if
+    # not careful, so we use make to pass less aggressive Ninja flags.
+    # num-cores-low-mem needs to be defined in your kdesrc-buildrc.
+    make-options NINJAFLAGS=-j${num-cores-low-mem}
+end options
+
+# vim: set ft=kdesrc-buildrc:
+</pre>
+
+Debian/Ubuntu:
+<pre>
+apt build-dep qt6-base-dev qt6-tools-dev qt6-shadertools-dev qt6-shadertools-dev qt6-svg-dev \
+qt6-image-formats-plugins qt6-multimedia-dev qt6-wayland-dev \
+qt6-websockets-dev qt6-webchannel-dev qt6-webengine-dev qt6-webview-dev qt6-sensors-dev\
+qt6-networkauth-dev qt6-5compat-dev qt6-documentation-tools qt6-positioning-dev \
+qt6-virtualkeyboard-dev qt6-translations-l10n \
+qt6-languageserver-dev
+
+# If qttools does not build because of missing "#include <litehtml.h>"
+# as per https://groups.google.com/g/linux.debian.bugs.dist/c/xQS2TvgKn6E
+# Edit ~/kde/src/qttools/src/assistant/qlitehtml/src/container_qpainter_p.h:80
+# replace "#include <litehtml.h>" with "#include <litehtml/litehtml.h>".
+
+kdesrc-build qt6-set
+</pre>
+
+== Portable installation of kdesrc-build ==
+
+The current directory (pwd) is important when running kdesrc-build. If there exists a file kdesrc-buildrc in the the current directory (pwd), kdesrc-build will prefer that file over ~/.config/kdesrc-buildrc.
+
+If you are interested in or need separate builds of KDE software, like when building with Qt5 or Qt6, you can create a self-contained, portable installation of kdesrc-build in its own folder. This way, you can manage your kdesrc-build configuration files each in their own environment without mixing configurations or having to rebuild the universe every time you want to test a different one.
+
+{{Input|1=<nowiki>
+# To not lose your previous build, make a backup:
+mv ~/.config/kdesrc-buildrc ~/.config/kdesrc-buildrc~bak && mv ~/kde ~/kde~bak
+# Edit ~/.bashrc file and remove the kdesrc-build block.
+# Set up kdesrc-build by following just the chapter https://community.kde.org/Get_Involved/development#Set_up_kdesrc-build
+# Make sure to answer "No" when it asks if you want to add the kdesrc-build block to ~/.bashrc.
+# Do not source ~/.bashrc.
+# Edit ~/.bashrc file and remove the kdesrc-build block.
+# Reboot the computer or relogin such that the $PATH environment variable
+# does not contain the string "~/kde" or sub directories of "~/kde".
+# You should not have built anything using kdesrc-build yet.
+# Then move the generated kdesrc-buildrc to inside the new ~/kde folder:
+mv ~/.config/kdesrc-buildrc ~/kde
+# This will make kdesrc-build use this file even if ~/.config/kdesrc-buildrc exists.
+# Then link kdesrc-build and kdesrc-run to the root of the ~/kde folder:
+cd ~/kde
+ln -s src/kdesrc-build/kdesrc-build .
+ln -s src/kdesrc-build/kdesrc-run .
+# Edit the file paths in ~/kde/kdesrc-buildrc
+cd ~/kde
+# Calling ~/kde/kdesrc-build will then only use the current folder's kdesrc-buildrc:
+./kdesrc-build frameworks
+mv ~/kde ~/kde.5 # Or to any other directory.
+# Edit the file paths in the file ~/kde.5/kdesrc-buildrc
+cd ~/kde.5
+./kdesrc-build frameworks --refresh-build # Because binary files contain file full paths starting with "~/kde".
+</nowiki>}}
+
+== Two independent kdesrc-build installations on the same machine: kf6-qt6 and kf5-qt5 ==
+
+Make a backup of your existing kdesrc-build setup.
+<code>mv ~/.config/kdesrc-buildrc ~/.config/kdesrc-buildrc~bak && mv ~/kde ~/kde~bak</code>
+
+Set up a portable kdesrc-build from scratch in the directory <code>~/kde</code>. See the chapter [[#Portable installation of kdesrc-build]] for details. But do not run kdesrc-build to build anything.
+
+In the directory <code>~/kde</code> there will be a new kdesrc-build installation of type <code>kf5-qt5</code>.
+
+At the end of this procedure there will be two independent and portable kdesrc-build installations:
+* <code>~/kde5</code> - <code>kf5-qt5</code>
+* <code>~/kde6</code> - <code>kf6-qt6</code>
+
+{{Input|1=<nowiki>
+# kf5-qt5 kdesrc-build installation.
+cp ~/kde ~/kde5 # Or to any other directory.
+# Edit the file paths in the file ~/kde5/kdesrc-buildrc to point to "~/kde5" instead of "~/kde".
+cd ~/kde5
+./kdesrc-build frameworks --refresh-build # Because binary files contain file full paths starting with "~/kde".
+# Now you have a kdesrc-build kf5-qt5 installation in ~/kde5
+
+# kf6-qt6 kdesrc-build installation.
+mv ~/kde ~/kde6 # Or to any other directory.
+# Edit the file ~/kde6/kdesrc-buildrc such that the kdesrc-build installation becomes one of type kf6-qt6.
+# See this wiki page for examples on how to convert a kf5-qt5 kdesrc-build installation to a kf6-qt6 kdesrc-build installation.
+# Edit the file paths in the file ~/kde6/kdesrc-buildrc to point to "~/kde6" instead of "~/kde".
+cd ~/kde6
+./kdesrc-build frameworks --refresh-build # Because binary files contain file full paths starting with "~/kde".
+# Now you have a kdesrc-build kf6-qt6 installation in ~/kde6
+</nowiki>}}
+
+Usage:
+
+{{Input|1=<nowiki>
+# Use different terminal windows or tabs (e.g. different Konsole tabs) for
+# kf5-qt5 and kf6-qt6
+
+# Go to the terminal window or tab for kf5-qt5.
+cd ~/kde5
+./kdesrc-build kcalc
+./kdesrc-run kcalc
+
+# Go to the terminal window or tab for kf6-qt6.
+cd ~/kde6
+./kdesrc-build plasma-systemmonitor
+./kdesrc-run plasma-systemmonitor
+</nowiki>}}
+
+== What is the command line of the processes started by kdesrc-build ==
+
+E.g. what are the command lines that are run by kdesrc-build in order to run the CMake configure step for the kconfig KDE git repository?
+
+{{Input|1=<nowiki>
+kdesrc-build kconfig --no-src --no-include-dependencies --debug --refresh-build |& tee ~/a.txt
+kate ~/a.txt &
+</nowiki>}}
+
+Returns:
+
+{{Input|1=<nowiki>
+Building kconfig (build system KDE CMake) from frameworks (1/1)
+	Queueing PKG_CONFIG_PATH to be set to /home/username/kde/usr/lib/pkgconfig
+	Queueing LD_LIBRARY_PATH to be set to /home/username/kde/usr/lib
+	Queueing PATH to be set to /home/username/kde/usr/bin:/home/username/kde/src/kdesrc-build:/home/username/.local/bin:/home/username/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin
+	Not prepending /home/username/kde/usr/lib/pkgconfig to PKG_CONFIG_PATH as it appears to already be defined in PKG_CONFIG_PATH.
+	Queueing PKG_CONFIG_PATH to be set to /home/username/kde/usr/lib/pkgconfig
+	Not prepending /home/username/kde/usr/lib to LD_LIBRARY_PATH as it appears to already be defined in LD_LIBRARY_PATH.
+	Queueing LD_LIBRARY_PATH to be set to /home/username/kde/usr/lib
+	Not prepending /home/username/kde/usr/bin to PATH as it appears to already be defined in PATH.
+	Queueing PATH to be set to /home/username/kde/usr/bin:/home/username/kde/src/kdesrc-build:/home/username/.local/bin:/home/username/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin
+	Queueing CMAKE_PREFIX_PATH to be set to /home/username/kde/usr
+	Queueing CMAKE_MODULE_PATH to be set to /home/username/kde/usr/lib64/cmake:/home/username/kde/usr/lib/cmake
+	Queueing XDG_DATA_DIRS to be set to /home/username/kde/usr/share:/usr/share/plasma:/home/username/.local/share/flatpak/exports/share:/var/lib/flatpak/exports/share:/usr/local/share:/usr/share:/var/lib/snapd/desktop
+	Source update complete for kconfig: Skipped
+	cd /home/username/kde/build
+
+	Preparing build system for kconfig.
+	Removing files in build directory for kconfig
+	Old build system cleaned, starting new build system.
+	cd /home/username/kde/build/kconfig
+
+	Running cmake targeting Unix Makefiles...
+run_logged_p(): Module kconfig, Command: {'cmake', '-B', '.', '-S', '/home/username/kde/src/kconfig', '-G', 'Unix Makefiles', '-DCMAKE_EXPORT_COMPILE_COMMANDS:BOOL=ON', '-DCMAKE_BUILD_TYPE=Debug', '-DQT_MAJOR_VERSION=6', '-DBUILD_WITH_QT6=ON', '-DBUILD_TESTING=TRUE', '-DBUILD_WITH_QT6=ON', '-DCMAKE_CXX_FLAGS:STRING=-pipe', '-DCMAKE_INSTALL_PREFIX=/home/username/kde/usr'} from /home/username/kde/build/kconfig
+	cd /home/username/kde/build/kconfig
+
+log_command(): Module kconfig, Command: cmake -B . -S /home/username/kde/src/kconfig -G Unix Makefiles -DCMAKE_EXPORT_COMPILE_COMMANDS:BOOL=ON -DCMAKE_BUILD_TYPE=Debug -DQT_MAJOR_VERSION=6 -DBUILD_WITH_QT6=ON -DBUILD_TESTING=TRUE -DBUILD_WITH_QT6=ON -DCMAKE_CXX_FLAGS:STRING=-pipe -DCMAKE_INSTALL_PREFIX=/home/username/kde/usr
+run_logged_p(): kconfig cmake complete: 0
+</nowiki>}}
+
+Therefore, kdesrc-build has run the following commands:
+
+{{Input|1=<nowiki>
+# Preparing build system for kconfig. Removing files in build directory for kconfig. Old build system cleaned, starting new build system.
+rm -rf /home/username/kde/build/kconfig
+mkdir -p /home/username/kde/build/kconfig
+
+# Queueing X to be set to ...
+PKG_CONFIG_PATH=/home/username/kde/usr/lib/pkgconfig
+LD_LIBRARY_PATH=/home/username/kde/usr/lib
+PATH=/home/username/kde/usr/bin:/home/username/kde/src/kdesrc-build:/home/username/.local/bin:/home/username/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin
+CMAKE_PREFIX_PATH=/home/username/kde/usr
+CMAKE_MODULE_PATH=/home/username/kde/usr/lib64/cmake:/home/username/kde/usr/lib/cmake
+XDG_DATA_DIRS=/home/username/kde/usr/share:/usr/share/plasma:/home/username/.local/share/flatpak/exports/share:/var/lib/flatpak/exports/share:/usr/local/share:/usr/share:/var/lib/snapd/desktop
+
+cd /home/username/kde/build/kconfig
+
+cmake -B . -S /home/username/kde/src/kconfig -G Unix\ Makefiles -DCMAKE_EXPORT_COMPILE_COMMANDS:BOOL=ON -DCMAKE_BUILD_TYPE=Debug -DQT_MAJOR_VERSION=6 -DBUILD_WITH_QT6=ON -DBUILD_TESTING=TRUE -DBUILD_WITH_QT6=ON -DCMAKE_CXX_FLAGS:STRING=-pipe -DCMAKE_INSTALL_PREFIX=/home/username/kde/usr
+</nowiki>}}
+
+== How to write the entire verbose STDOUT and STDERR of kdesrc-build to a file ==
+
+<pre>
+script -eq -c "kdesrc-build kconfig --no-src --no-include-dependencies --refresh-build --debug" ~/a.txt
+</pre>
+
+Note: you can remove the terminal ANSI color codes using e.g. <code>ansi2txt</code>, available e.g. in the package <code>colorized-logs</code>. E.g.
+<pre>
+sudo apt install colorized-logs
+cat ~/a.txt | ansi2txt > ~/a_script.txt
+</pre>
+
+<code>script -eq -c "command" ~/a.txt</code> is better than <code>command |& tee ~/a.txt</code> because kdesrc-build behaves differently if it is run in a user interactive terminal session (<code>isatty</code>).
+
+If using <code>tee</code>, part of the output of kdesrc-build will not be written to file. E.g. the output of the <code>cmake</code> step, the final part of the <code>make -j</code> step, the final part of the <code>make install</code> step.
+
+== Other CPU architectures than x86_64/amd64 and x86 ==
+
+You can build and develop KDE projects using a Linux OS installed on an  [[Get_Involved/development/ARM|ARM]] architecture CPU.
+
+== kdesrc-build issues ==
+
+=== "kdesrc-build kfilemetadata" fails because of appimage ===
+
+This happens on KDE neon.
+
+Solution:
+<pre>
+sudo apt remove libappimage-dev
+</pre>
+
+=== wayland-protocols is too old, e.g. "kdesrc-build kidletime" fails ===
+
+<pre>
+mkdir -p ~/kde/misc && cd ~/kde/misc
+wget https://gitlab.freedesktop.org/wayland/wayland-protocols/-/releases/1.31/downloads/wayland-protocols-1.31.tar.xz
+tar -xJvf wayland-protocols-*.tar.xz && mv wayland-protocols-*/ wayland-protocols
+cd wayland-protocols
+meson setup builddir --prefix $HOME/kde/usr
+meson compile -C builddir
+meson install -C builddir
+</pre>
+
+=== "kdesrc-build kpat" fails because of black-hole-solitaire ===
+
+This happens on Debian/Ubuntu/Kubuntu. Because there is no Linux distribution binary package for https://github.com/shlomif/black-hole-solitaire.
+
+Solution: append at the end of kdesrc-buildrc file:
+<pre>
+options kpat
+    cmake-options -DWITH_BH_SOLVER=OFF
+end options
+</pre>
+
+=== "kdesrc-build frameworks" fails because of qtwebkit ===
+
+Note: qtwebkit and kdewebkit are Qt5 only.
+
+Some Linux OSes do not have a package for qtwebkit anymore. E.g. the Arch Linux family.
+
+When you want to build all of the KDE Frameworks 5 using kdesrc-build, exclude kdewebkit.
+
+<pre>
+kdesrc-build frameworks --ignore-modules kdewebkit
+</pre>
+
+=== libdisplay-info is not available ===
+
+If your Linux OS does not have a package for libdisplay-info.
+Append at the end of the file <code>kdesrc-buildrc</code>:
+<pre>
+module libdisplay-info
+  repository https://gitlab.freedesktop.org/emersion/libdisplay-info.git
+end module
+</pre>
+
+=== gpgme fails to build ===
+
+See https://bugs.kde.org/show_bug.cgi?id=472917
+
+# Old
+
+# Glossary
+RDP is the Remote Desktop Protocol. https://en.wikipedia.org/wiki/Remote_Desktop_Protocol
+
+OS means operating system.
+
+# RDP features
+
+* Resizing the RDP client window, changes the resolution of the RDP server. The Microsoft Windows RDP server does not support this feature.
+* Copy/paste of text and maybe even files.
+* YouTube playback with almost acceptable speed and with sound.
+* The speed is so good, that I do most of my work via an RDP connection. Everything is snappy, even using an Integrated Development Environment (IDE).
+
+# Windows
+
+## Server
+On Windows you can enable the RDP server. E.g. right click on Windows Start Menu > System > Rename this PC (advanced) > tab "Remote" > Remote Desktop groupbox > enable "Allow remote connections to this computer". On Windows Server without full GUI experience > sconfig.cmd.
+
+## Client
+Open the app Remote Desktop Connection.
+Or install another RDP client e.g. "Sysinternals Remote Desktop Connection Manager" (rdcman) https://en.wikipedia.org/wiki/Remote_Desktop_Protocol
+
+I prefer to use the app "Sysinternals Remote Desktop Connection Manager" because I need the RDP client to have a window titlebar and window border, I can hide the menu, and after I resize the window, if I select to reconnect, the RDP server's resolution will be changed correctly.
+
+# Linux and FreeBSD
+
+## Server
+
+If you cannot make your X server work correctly, e.g. small resolution. An alternative is to install an RDP server and to connect to this computer from another computer using an RDP client.
+
+Note: on the RDP server, you should log out if you use X11 and you are connected via the computer's keyboard and mouse (aka Ctrl+Alt+F1, aka one of the 8 virtual consoles). Before connecting using an RDP client.
+
+### Kubuntu >= 22.10
+
+<pre>
+sudo apt install xrdp xorgxrdp
+</pre>
+
+
+### Fedora >= 38
+
+<pre>
+sudo dnf install xrdp xorgxrdp
+sudo systemctl enable --now xrdp
+# Edit file /etc/xrdp/xrdp.ini, uncomment the entire section "[Xvnc]".
+sudo reboot
+</pre>
+
+### EndeavourOS with KDE Plasma installed from the OS installer, Arch Linux installed using archinstall with the option "desktop, kde" from the OS installer
+
+If yay is not installed, such as in Arch Linux, install yay from AUR https://aur.archlinux.org/packages/yay https://wiki.archlinux.org/title/Arch_User_Repository :
+<pre>
+pacman -S base-devel
+mkdir -p ~/work/aur ; cd ~/work/aur
+git clone https://aur.archlinux.org/yay.git
+cd yay
+makepkg
+sudo pacman -U yay*.pkg.tar.zst # E.g. yay-11.3.2-1-x86_64.pkg.tar.zst
+</pre>
+
+Then:
+<pre>
+# As per https://wiki.archlinux.org/title/xrdp
+yay xrdp
+yay xorgxrdp
+
+systemctl enable --now xrdp
+
+cat /etc/X11/Xwrapper.config
+# Should say:
+allowed_users = anybody
+
+cat ~/.xinitrc
+# Should say:
+export DESKTOP_SESSION=plasma
+/usr/lib/plasma-dbus-run-session-if-needed startplasma-x11
+</pre>
+
+### FreeBSD 13.2
+
+<pre>
+I installed FreeBSD 13.2 using FreeBSD-13.2-RELEASE-amd64-disc1.iso.
+In the installer, I created a user named "administrator" and added this user to the user group "wheel".
+
+I connect to the VM in text user interface mode using ssh:
+ssh administrator@192.68.122.6
+
+su -
+
+Surviving at the command line: bash, emacs-nox, mc, git.
+chsh -s /usr/local/bin/bash
+
+Surviving in GUI: xorg,
+pw groupmod video -m administrator
+noto-2.0, sudo
+visudo
+, uncomment line:
+%wheel ALL=(ALL:ALL) ALL
+
+/etc/fstab
+proc /proc procfs rw 0 0
+mount -a
+
+pkg install kde5
+sysrc dbus_enable="YES"
+sysctl net.local.stream.recvspace=65536
+sysctl net.local.stream.sendspace=65536
+
+I followed the instructions from https://download.freebsd.org/doc/en/books/handbook/handbook_en.pdf up to and including the chapter "7.2.1.4. Start KDE Plasma".
+
+pkg install xrdp xorgxrdp
+Edit /etc/rc.conf, append the lines:
+sysrc xrdp_enable="YES"
+sysrc xrdp_sesman_enable="YES"
+
+Create file ~/startwm.sh with content:
+exec ck-launch-session startplasma-x11
+
+chmod +x ~/startwm.sh
+
+I connect to the VM in graphical user interface mode using xfreerdp:
+xfreerdp /u:administrator /w:960 /h:1020 /v:192.168.122.6 /video /sound:sys:pulse /rfx /network:lan /gfx /dynamic-resolution /bpp:32
+
+pkg install firefox
+</pre>
+
+## Client
+Install from your OS the binary package `freerdp`.
+
+Run:
+<pre>
+xfreerdp --help
+</pre>
+
+Note down any of the command line parameters that you might need.
+
+Use a command line like:
+<pre>
+xfreerdp /u:admin /w:1920 /h:1080 /v:192.168.122.168 /video /rfx /network:lan /gfx /dynamic-resolution /sound:sys:pulse
+</pre>
+
+You can resize the window and the resolution of the RDP server will change correctly.
+
+Other interesting command line parameters:
+<pre>
++home-drive
+connection.rdp
+</pre>
