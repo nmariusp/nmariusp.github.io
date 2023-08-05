@@ -47,6 +47,7 @@ git clone https://invent.kde.org/sdk/kdesrc-build.git
 cd kdesrc-build
 
 ./kdesrc-build --initial-setup
+# Press enter when asked "Update your ~/.bashrc? (y/N)".
 mv ~/.config/kdesrc-buildrc .
 # Edit the file ~/kde5/src/kdesrc-build/kdesrc-buildrc:
 # A. replace "/home/username/kde/src/kdesrc-build" with "".
@@ -109,7 +110,13 @@ cd ~/kde6/src/kdesrc-build
 
 
 
+# Advanced topics
 
+## Cannot install kdesrc-build on Alpine Linux
+
+<pre>
+doas apk add doas-sudo-shim perl
+</pre>
 
 
 
