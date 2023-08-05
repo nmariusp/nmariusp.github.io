@@ -6,15 +6,15 @@ External resources https://community.kde.org/Get_Involved/development and https:
 
 If you want to build the latest KDE source code from git, you want to use kdesrc-build.
 
-# Short version
+# Short version of installing (setting up) kdesrc-build for Qt5 (kf5-qt5) and Qt6 (kf6-qt6)
 
 This will allow you to read from the KDE git repositories, i.e. to build software. In order to write to the KDE git repositories additional steps are required.
 
+You only need to set up kdesrc-build once. You can use the resulting kdesrc-build installation for months.
+
 Steps:
 
-`Step 1.` Set up kdesrc-build for Qt5. You only need to set up kdesrc-build once. You can use the ensuing kdesrc-build installation for months.
-
-`Step 1.1.` Use a Linux operating system (OS) that is better supported by kdesrc-build. I.e. a Linux OS for which "kdesrc-build --initial-setup" has support and a Linux OS that uses the KDE Plasma desktop and has new packages. Alphabetic list of such Linux OSes: Arch, latest Fedora KDE Spin, KDE neon, latest Kubuntu, openSUSE Tumbleweed.
+`Step 1.` Use a Linux operating system (OS) that is better supported by kdesrc-build. I.e. a Linux OS for which "kdesrc-build --initial-setup" has support and a Linux OS that uses the KDE Plasma desktop and has new packages. Alphabetic list of such Linux OSes: Arch, latest Fedora KDE Spin, KDE neon, latest Kubuntu, openSUSE Tumbleweed.
 
 If you cannot run the Linux OS on a hardware computer, use a Virtual Machine (VM).
 
@@ -24,21 +24,112 @@ The command line instructions might be specific for different families of Linux 
 
 Please make sure the `sudo` command works correctly in your Linux OS installation.
 
-`Step 1.2.`
+`Step 2.`
 
 Arch: <pre>sudo pacman -S git</pre>
 Debian: <pre>sudo apt update && sudo apt install git</pre>
 Fedora: <pre>sudo dnf install git</pre>
 openSUSE: <pre>sudo zypper install git</pre>
 
-`Step 1.3.`
+`Step 3.`
 
 <pre>
 # Make a backup:
-mv ~/.config/kdesrc-buildrc ~/.config/kdesrc-buildrc~bak ; mv ~/kde ~/kde~bak
+mv ~/.config/kdesrc-buildrc ~/.config/kdesrc-buildrc~bak
+mv ~/kde ~/kde~bak
+
+# kdesrc-build kf5-qt5
+mv ~/kde5 ~/kde5~bak
+
+mkdir -p ~/kde5/src
+cd ~/kde5/src/
+git clone https://invent.kde.org/sdk/kdesrc-build.git
+cd kdesrc-build
+
+./kdesrc-build --initial-setup
+mv ~/.config/kdesrc-buildrc .
+# Edit the file ~/kde5/src/kdesrc-build/kdesrc-buildrc:
+# A. replace "/home/username/kde/src/kdesrc-build" with "".
+# sed -i
+
+# B. replace "~/kde" with "~/kde5".
+
+# git ignore the file ~/kde5/src/kdesrc-build/kdesrc-buildrc
+echo kdesrc-buildrc >> .git/exclude
+
+# The same for kdesrc-build kf6-qt6
+mv ~/kde6 ~/kde6~bak
+cp -r ~/kde5 ~/kde6
+
+# Edit the file ~/kde6/src/kdesrc-build/kdesrc-buildrc:
+# A. replace "5" with "6".
+# sed -i
 </pre>
 
+`Step 4.` Install enough binary packages from your Linux OS such that you can build KDE Frameworks 5 and KDE Frameworks 6 using kdesrc-build.
+
+
+`Step 5.` Test the kdesrc-build installations for Qt5 (kf5-qt5) and Qt6 (kf6-qt6).
+
+I recomend this order:
+
+<pre>
+cd ~/kde5/src/kdesrc-build
+./kdesrc-build kconfig
+./kdesrc-build kcalc
+./kdesrc-run kcalc
+./kdesrc-build frameworks
+</pre>
+
+<pre>
+cd ~/kde6/src/kdesrc-build
+./kdesrc-build kconfig
+./kdesrc-build kcalc
+./kdesrc-run kcalc
+./kdesrc-build frameworks
+</pre>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# TODO: delete everything starting from here
+
 # Ignore everything below
+
+#Page https://community.kde.org/Get_Involved/development/Set_up_a_development_environment
 
 ## Set up a development environment
 
@@ -123,6 +214,8 @@ You'll want to disable indexing for your development-related git repos and the f
 
 == Next Steps ==
 '''Reboot your computer''' and log back in so the package changes, and the <code>~/.bashrc</code> changes take effect on your user account. Once that's done, your development environment is set up and ready to build software. Time to learn how to use <code>kdesrc-build</code> tool to [[Get_Involved/development/Build_software_with_kdesrc-build|manage and build software from source code]]!
+
+# Page https://community.kde.org/Get_Involved/development/Build_software_with_kdesrc-build
 
 ## Build software with kdesrc-build
 
@@ -258,6 +351,9 @@ kdesrc-run kcalc
 
 == Next Steps ==
 Now you can compile anything in KDE from its source code! Time to think about [[Get_Involved/development#Choose what_to_work_on|what to do with this superpower]]...
+
+
+# Page https://community.kde.org/Get_Involved/development/More
 
 ## More
 
@@ -947,154 +1043,293 @@ end module
 
 === gpgme fails to build ===
 
-See https://bugs.kde.org/show_bug.cgi?id=472917
+# Page https://community.kde.org/Get_Involved/development/IDE_configuration/Qt_Creator
 
-# Old
+Qt Creator is an IDE from Qt.
 
-# Glossary
-RDP is the Remote Desktop Protocol. https://en.wikipedia.org/wiki/Remote_Desktop_Protocol
+A screen recording version is available https://www.youtube.com/watch?v=ASnDeEaXnbI
 
-OS means operating system.
+== Features ==
 
-# RDP features
+Qt Creator is a good choice when starting to contribute to KDE.
 
-* Resizing the RDP client window, changes the resolution of the RDP server. The Microsoft Windows RDP server does not support this feature.
-* Copy/paste of text and maybe even files.
-* YouTube playback with almost acceptable speed and with sound.
-* The speed is so good, that I do most of my work via an RDP connection. Everything is snappy, even using an Integrated Development Environment (IDE).
+Qt Creator has: support for kdesrc-build, a good debugger, source code navigation, Qt widgets UI designer, basic QML editor, QML debugger, Qt resources editor, Qt project templates, good CMake support, C++ static analyzers.
 
-# Windows
+Additional features:
+* Source code navigation: switch header/source, follow symbol, switch between function declaration/definition, find references, open type hierarchy, open include hierarchy.
+* Refactor rename symbol.
+* Views: class view, tests view, document outline view and document outline combo box, CMake structure view, file system view.
 
-## Server
-On Windows you can enable the RDP server. E.g. right click on Windows Start Menu > System > Rename this PC (advanced) > tab "Remote" > Remote Desktop groupbox > enable "Allow remote connections to this computer". On Windows Server without full GUI experience > sconfig.cmd.
+For best results, download Qt Creator from the Qt website. https://www.youtube.com/watch?v=QVgInye6HDA
 
-## Client
-Open the app Remote Desktop Connection.
-Or install another RDP client e.g. "Sysinternals Remote Desktop Connection Manager" (rdcman) https://en.wikipedia.org/wiki/Remote_Desktop_Protocol
+==kdesrc-build==
 
-I prefer to use the app "Sysinternals Remote Desktop Connection Manager" because I need the RDP client to have a window titlebar and window border, I can hide the menu, and after I resize the window, if I select to reconnect, the RDP server's resolution will be changed correctly.
+After you configure kdesrc-build and you can correctly build a KDE project such as kcalc.
 
-# Linux and FreeBSD
+Edit ~/.config/kdesrc-buildrc . It should look like:
 
-## Server
+{{Input|1=<nowiki>
+...
+    include-dependencies true
+...
+    kdedir ~/kde/usr
+...
+    source-dir ~/kde/src
+...
+    build-dir ~/kde/build
+...
+    cmake-options -DCMAKE_BUILD_TYPE=Debug
+...
+</nowiki>}}
 
-If you cannot make your X server work correctly, e.g. small resolution. An alternative is to install an RDP server and to connect to this computer from another computer using an RDP client.
+The line above is important in order to use the debugger from Qt Creator.
 
-Note: on the RDP server, you should log out if you use X11 and you are connected via the computer's keyboard and mouse (aka Ctrl+Alt+F1, aka one of the 8 virtual consoles). Before connecting using an RDP client.
+Make sure you have the correct number on the line <code>num-cores </code>.
 
-### Kubuntu >= 22.10
+Build kcalc, make sure there are no errors:
+{{Input|1=<nowiki>
+kdesrc-build kcalc
+</nowiki>}}
 
-<pre>
-sudo apt install xrdp xorgxrdp
-</pre>
+==Install Qt Creator==
 
+Install Qt Creator. E.g. download from the Qt website https://www.qt.io/ the latest version. Video version https://www.youtube.com/watch?v=QVgInye6HDA
 
-### Fedora >= 38
+The newest version of Qt Creator installed from the Qt website will have the latest features and the latest bug fixes.
 
-<pre>
-sudo dnf install xrdp xorgxrdp
-sudo systemctl enable --now xrdp
-# Edit file /etc/xrdp/xrdp.ini, uncomment the entire section "[Xvnc]".
-sudo reboot
-</pre>
+Or e.g. from your current Linux distribution's packages. E.g.
+{{Input|1=<nowiki>
+apt install qtcreator
+</nowiki>}}
 
-### EndeavourOS with KDE Plasma installed from the OS installer, Arch Linux installed using archinstall with the option "desktop, kde" from the OS installer
+===QML Designer===
 
-If yay is not installed, such as in Arch Linux, install yay from AUR https://aur.archlinux.org/packages/yay https://wiki.archlinux.org/title/Arch_User_Repository :
-<pre>
-pacman -S base-devel
-mkdir -p ~/work/aur ; cd ~/work/aur
-git clone https://aur.archlinux.org/yay.git
-cd yay
-makepkg
-sudo pacman -U yay*.pkg.tar.zst # E.g. yay-11.3.2-1-x86_64.pkg.tar.zst
-</pre>
+Qt Creator has a "forms editor" for QML. You can enable it from the Qt Creator main menu > Help > About Plugins... > Qt Quick > enable "QmlDesigner". If it asks you to restart Qt Creator, do it.
 
-Then:
-<pre>
-# As per https://wiki.archlinux.org/title/xrdp
-yay xrdp
-yay xorgxrdp
+Test it. From Qt Designer main menu > File > Close all Files and Editors. File > New Project... > Application (Qt) > Qt Quick Application, finish the wizard correctly. Open the file "Main.qml" in "Switch to Edit mode Ctrl+2". In the left hand side, choose "Switch to Design mode Ctrl+3".
 
-systemctl enable --now xrdp
+From the Qt Creator main menu > View > Workspaces > Views-All. Close all of the tool windows (views) that you do not need, e.g. "3D", "States", "Timeline", "Curves", "Transitions".
 
-cat /etc/X11/Xwrapper.config
-# Should say:
-allowed_users = anybody
+==Load a KDE git repository in Qt Creator==
 
-cat ~/.xinitrc
-# Should say:
-export DESKTOP_SESSION=plasma
-/usr/lib/plasma-dbus-run-session-if-needed startplasma-x11
-</pre>
-
-### FreeBSD 13.2
+We use kcalc as the example KDE git repository. Make sure it was built correctly using kdesrc-build.
 
 <pre>
-I installed FreeBSD 13.2 using FreeBSD-13.2-RELEASE-amd64-disc1.iso.
-In the installer, I created a user named "administrator" and added this user to the user group "wheel".
-
-I connect to the VM in text user interface mode using ssh:
-ssh administrator@192.68.122.6
-
-su -
-
-Surviving at the command line: bash, emacs-nox, mc, git.
-chsh -s /usr/local/bin/bash
-
-Surviving in GUI: xorg,
-pw groupmod video -m administrator
-noto-2.0, sudo
-visudo
-, uncomment line:
-%wheel ALL=(ALL:ALL) ALL
-
-/etc/fstab
-proc /proc procfs rw 0 0
-mount -a
-
-pkg install kde5
-sysrc dbus_enable="YES"
-sysctl net.local.stream.recvspace=65536
-sysctl net.local.stream.sendspace=65536
-
-I followed the instructions from https://download.freebsd.org/doc/en/books/handbook/handbook_en.pdf up to and including the chapter "7.2.1.4. Start KDE Plasma".
-
-pkg install xrdp xorgxrdp
-Edit /etc/rc.conf, append the lines:
-sysrc xrdp_enable="YES"
-sysrc xrdp_sesman_enable="YES"
-
-Create file ~/startwm.sh with content:
-exec ck-launch-session startplasma-x11
-
-chmod +x ~/startwm.sh
-
-I connect to the VM in graphical user interface mode using xfreerdp:
-xfreerdp /u:administrator /w:960 /h:1020 /v:192.168.122.6 /video /sound:sys:pulse /rfx /network:lan /gfx /dynamic-resolution /bpp:32
-
-pkg install firefox
+kdesrc-build kcalc
 </pre>
 
-## Client
-Install from your OS the binary package `freerdp`.
+Start Qt Creator. E.g. from the KDE Application Launcher (or from KRunner Alt+F2).
 
-Run:
-<pre>
-xfreerdp --help
-</pre>
+From the qtcreator main menu
 
-Note down any of the command line parameters that you might need.
+> File > Close All Projects and Editors
 
-Use a command line like:
-<pre>
-xfreerdp /u:admin /w:1920 /h:1080 /v:192.168.122.168 /video /rfx /network:lan /gfx /dynamic-resolution /sound:sys:pulse
-</pre>
+> File > Open File or Project <code>~/kde/src/kcalc/CMakeLists.txt</code>
 
-You can resize the window and the resolution of the RDP server will change correctly.
+Left Sidebar > Switch to Projects mode Ctrl+5 > Manage Kits... Under "Kits > Manual", remove all kits except "Desktop (default)". E.g. select Manual > "Imported Kit" > press the "Remove" button > press the "Apply" button.
 
-Other interesting command line parameters:
-<pre>
-+home-drive
-connection.rdp
-</pre>
+Button "Import Existing Build..." > Directory: ~/kde/build/kcalc > Choose.
+
+CMake should be configured correctly. CMake is run automatically, see "General Messages Alt+6".
+
+Left Sidebar > Switch to Projects mode Ctrl+5 > Active project: kcalc. Build & Run: not the Desktop kit (e.g. "Imported Kit") > Build. Build Settings > Edit build configuration: "Debug2".
+
+Translate the content of the file <code>~/kde/build/kcalc/prefix.sh</code> to the syntax of Qt Creator "Batch Edit". E.g. for Debian based distributions if <code>~/kde/build/kcalc/prefix.sh</code> is like:
+
+{{Input|1=<nowiki>
+export PATH=/home/username/kde/usr/bin:$PATH
+
+# LD_LIBRARY_PATH only needed if you are building without rpath
+# export LD_LIBRARY_PATH=/home/username/kde/usr/lib/x86_64-linux-gnu:$LD_LIBRARY_PATH
+
+export XDG_DATA_DIRS=/home/username/kde/usr/share:${XDG_DATA_DIRS:-/usr/local/share/:/usr/share/}
+export XDG_CONFIG_DIRS=/home/username/kde/usr/etc/xdg:${XDG_CONFIG_DIRS:-/etc/xdg}
+
+export QT_PLUGIN_PATH=/home/username/kde/usr/lib/x86_64-linux-gnu/plugins:$QT_PLUGIN_PATH
+export QML2_IMPORT_PATH=/home/username/kde/usr/lib/x86_64-linux-gnu/qml:$QML2_IMPORT_PATH
+
+export QT_QUICK_CONTROLS_STYLE_PATH=/home/username/kde/usr/lib/x86_64-linux-gnu/qml/QtQuick/Controls.2/:$QT_QUICK_CONTROLS_STYLE_PATH
+</nowiki>}}
+
+Then the same thing in the syntax of Qt Creator "Batch Edit" looks like this block of text:
+
+{{Input|1=<nowiki>
+PATH=+/home/username/kde/usr/bin
+XDG_DATA_DIRS=+/home/username/kde/usr/share
+XDG_CONFIG_DIRS=+/home/username/kde/usr/etc/xdg
+QT_PLUGIN_PATH=+/home/username/kde/usr/lib/x86_64-linux-gnu/plugins
+QML2_IMPORT_PATH=+/home/username/kde/usr/lib/x86_64-linux-gnu/qml
+QT_QUICK_CONTROLS_STYLE_PATH=+/home/username/kde/usr/lib/x86_64-linux-gnu/qml/QtQuick/Controls.2/
+</nowiki>}}
+
+You probably want to save the above block of text, in order to reuse it when loading other KDE git repositories in Qt Creator. E.g. to file <code>~/kde/qtcreator_build_environment.txt</code>.
+
+Left Sidebar > Switch to Projects mode Ctrl+5 > Build & Run: not the Desktop kit (e.g. "Imported Kit") > Run. Run Settings > Run > Run configuration: select "kcalc". This is the CMake executable target for the GUI application kcalc. The other items in the combobox e.g. "knumbertest" are binary executable (CTest type) tests. Environment > Use Build Environment > press the Details button > press the "Reset" button if possible > press the "Batch Edit..." button. Paste in there, the text block that you prepared above, then press the OK button.
+
+Click on the left sidebar, the button above "Run Ctrl+R". It should show: Project: kcalc. Kit: not the Desktop kit (e.g. "imported Kit"). Deploy: Deploy Configuration. Build: Debug2. Run: kcalc.
+
+CMake configure was run automatically. You can run it again from the Qt Creator main menu > Build > Run CMake.
+
+You can build by pressing the hammer icon on the lower left with tooltip "Build Project Ctrl+B". Or from the Qt Creator main menu > Build > "Build Project Ctrl+B".
+
+Left Sidebar > Switch to Edit mode (Ctrl+2) > Select "Projects" from the combobox (the other interesting combobox item is "File System"). In the "Projects" left hand treeview > kcalc > kcalc > Source Files > double click on the file kcalc.cpp. The file kcalc.cpp will be shown in the editor view. Click inside the source code in text editor.
+
+In the text editor's top bar > function/identifier/method/type/symbols combobox, select the last item: <code>main(int, char**) -> int</code>. Click on the line with the opening curly bracket of the function main. From the main menu > Debug > Set or Remove Breakpoint (F9).
+
+Left Sidebar > Start debugging of startup project. The debugger will start correctly and break on the source code line with the curly bracket.
+
+From the main menu Debug > Step Over (F10)/Step Into(F11)/Step Out (Shift+F11).
+
+==Enable parallel jobs in Qt Creator==
+
+* Left Sidebar > Switch to Projects mode (Ctrl+5).
+* Under the Build settings of the imported kit find the "Build Steps" option.
+* Click on the "Details" button on the right side of the "Build Steps" option to access the detailed build configuration.
+* Under the "Tool arguments" field add the argument "-j<jobs>".  Replace "<jobs>" with the desired number of parallel jobs you want to use during compilation. For example, if you have a CPU with 16 threads and want to use 12 parallel jobs, you would enter "-j12".
+* Save the changes (Autosave) and rebuild your project to get faster compilation.
+
+Enabling parallel jobs allows the compiler to utilize multiple processor cores simultaneously, significantly improving the compilation speed, especially for larger projects. By distributing the compilation tasks across multiple threads, the overall build time can be reduced, leading to a more efficient development workflow.
+
+# Page https://community.kde.org/Get_Involved/development/Install_the_dependencies
+
+If you have any trouble getting things to build due to missing 3rd-party package dependencies, read on to learn what to do. If you need help, see https://community.kde.org/Get_Involved#Getting_in_Touch_and_Working_Together.
+
+== How to install the dependencies of one package ==
+=== KDE neon, Debian, Ubuntu, Kubuntu ===
+All the build packages known by the package you want to build can be installed by running:
+
+<code>sudo apt build-dep <package you want to build></code>
+
+For example, to install the build dependencies for Dolphin, run:
+
+<code>sudo apt build-dep dolphin</code>
+
+=== Fedora ===
+If dependencies are missing for a specific RPM package, you can run:
+
+<code>sudo dnf builddep <name_of_rpm_package></code>
+
+For example, to install the build dependencies for Dolphin, run:
+
+<code>sudo dnf builddep dolphin</code>
+
+=== openSUSE ===
+Generally you can install the required -devel packages that are needed to build some KDE software from source by using <code>zypper</code> (as root, or by using <code>sudo</code>), e.g. to install the -devel packages required to build dolphin from source:
+{{Input|1=<nowiki>
+# zypper --plus-content repo-source source-install --build-deps-only dolphin
+</nowiki>}}
+
+replace ''dolphin'' with some other package name, e.g. to build ''ktexteditor'' from source:
+{{Input|1=<nowiki>
+# zypper --plus-content repo-source source-install --build-deps-only ktexteditor
+</nowiki>}}
+
+Note that the <code>--plus-content</code> option in the above commands means you don't need to have the source repository enabled all the time, <code>--plus-content</code> will make zypper temporarily enable it to get the info it needs.
+
+openSUSE (and most other RPM-based Linux distributions) support cmake() BuildRequires, which means you can install a development package like so:
+{{Input|1=<nowiki>
+# zypper install 'cmake(KF5KIO)'
+</nowiki>}}
+
+the part between the parenthesis ''KF5KIO'' is going to be in the error message that CMake will print in the terminal if you try to build something that requires e.g. KIO if KIO development headers aren't installed.
+
+Any other dependencies can be figured out and installed as you continue building the modules one by one.
+
+# Page https://community.kde.org/Get_Involved/development
+
+[[File:Mascot konqi-app-dev.png|right|x250px|]]
+By joining the ranks of KDE developers, you will get to implement new features and defeat bugs both daunting and simple, all while collaborating to make coherent and stable releases. Developers collaborate in teams based on what area they are working in. These can be small teams working on a single application, up to large teams working on a group of related pieces of software. Many developers are in more than one team.
+
+KDE runs or participates in several mentoring programs to help new developers, including an informal list of people who are willing to help newcomers get started. See the [[Mentoring]] page for more details.
+
+== Prerequisites ==
+
+=== Skills ===
+Most KDE software is written in C++ using the [https://www.qt.io Qt toolkit] and [https://develop.kde.org/products/frameworks/ KDE Frameworks]. Though prior experience with these technologies or other programming languages is helpful, you don't need to be a C++ programmer to get started! For example, no programming knowledge whatsoever is required to do things like improve text labels.
+
+If you'd like to dive deeper, the Qt wiki contains [https://wiki.qt.io/Books a list of online books] for learning Qt programming. Qt also provides [https://doc.qt.io/qt-5/qtexamplesandtutorials.html lots of examples] you can look at. For visual learners, [https://www.youtube.com/watch?v=JxyTkXLbcV4&list=PL6CJYn40gN6hdNC1IGQZfVI707dh9DPRc this YouTube playlist of QML tutorials] by KDE patron [https://www.kdab.com KDAB] may be useful. Finally, information about KDE Frameworks can be found on the [https://develop.kde.org/docs KDE Developer Platform] and [https://api.kde.org/ KDE API website]. Even more learning resources can be found [[Get_Involved/development/Learn|here]].
+
+=== Operating system ===
+For KDE development, we recommend a Linux operating system installed on your computer or in a [[/Developing_in_a_virtual_machine|virtual machine]]. Those that are best suited for development provide relatively recent versions of libraries needed by KDE software, and use the rolling-release model. Some examples are Arch, openSUSE Tumbleweed, and KDE neon. The latest versions of Fedora KDE or Kubuntu can work as well.
+
+Support for Windows and macOS is still experimental, and you may likewise have a better experience [[/Developing in a virtual machine|doing your development in a virtual machine using a Linux distribution]]. Setting up a development environment on [[/More#Other_operating_systems|other operating systems--including FreeBSD]]--is an advanced topic.
+
+== Set up a development environment ==
+If you don't have a KDE development environment set up, [[Get_Involved/development/Set_up_a_development_environment|learn how here]].
+
+== Build software with kdesrc-build ==
+Once you have a working development environment, learn how to [[Get_Involved/development/Build_software_with_kdesrc-build|use it to build various types of KDE software here]].
+
+== Set up an integrated development environment ==
+To make development process more convenient, you may want to use [[Get Involved/development/IDE configuration|IDE]]. This step is optional.
+
+== Choose what to work on ==
+A good place to start is with a small bug or feature in an existing piece of software that affects you personally ("scratch your own itch"). Get in touch with the existing developers (see [[#Communicate with the dev team|Communicate with the dev team]], below) and they can help you out, by pointing you to the right place in the code and giving advice about how to tackle the problem.
+
+Try not to start by proposing or working on major features or significant design changes. These can be controversial, and the smoothest way to get going is by working on relatively non-controversial bugfixes. Start slowly and build trust!
+
+Here are some other ideas for starting points:
+
+* Improve awkwardly-worded messages and labels that are written in English. This is a great way for non-programmers to contribute! If you can compile software and have a good grasp of English, you can make a big difference here.
+* Work on [https://bugs.kde.org/buglist.cgi?bug_status=UNCONFIRMED&bug_status=CONFIRMED&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED&keywords=junior-jobs&list_id=1340815 Junior Jobs], which are small tasks that are suitable for beginners (both bugs and features).
+* Work on [https://bugs.kde.org/buglist.cgi?bug_status=UNCONFIRMED&bug_status=CONFIRMED&bug_status=ASSIGNED&bug_status=REOPENED&keywords=usability&keywords_type=allwords&list_id=1493316&order=product%2Cchangeddate%20DESC%2Cbug_status%20DESC%2Cresolution%2Cpriority%2Cassigned_to%2Cbug_id&query_format=advanced Bugs related to] KDE's [[Goals/Usability_%26_Productivity | Usability & Productivity initiative]], many of which are small and easy.
+* [[Get_Involved/development/Easy|More easy tasks]].
+
+== Make your changes and test them ==
+Once you've made some changes, make sure the project still compiles and installs, and make sure the changes have the desired effect when you run the software. Then it's time to run the project's test suite. For example, in KCalc:
+
+{{Input|1=<nowiki>
+cd ~/kde/build/kcalc
+source prefix.sh
+ctest --output-on-failure
+</nowiki>}}
+
+If any test fails, that needs to be investigated and fixed before you can proceed. Once the tests pass, then run the software again to make sure it still behaves properly. If it doesn't, then go back and work on your patch some more, then re-compile and re-deploy, and test again, until the program does what you'd like it to do and all tests pass.
+
+== Submitting changes for review ==
+Once you're happy with a patch and have verified that it does what you want, it's time to submit your changes for the review!
+
+KDE uses their own GitLab instance called [https://invent.kde.org Invent] for submitting merge requests and code review. See the [[Infrastructure/GitLab#Submitting_a_merge_request|GitLab page]] to learn how to submit a merge request.
+
+== Communicate with the dev team ==
+There are several ways to get in touch with KDE developers, either generally or for a specific project. The most important communications channels are:
+* The [https://webchat.kde.org/#/room/#kde-devel:kde.org #kde-devel] channel on [[Matrix]] or the Libera Chat [[Internet Relay Chat | IRC]], which is where KDE developers chat in real-time about their work.
+* The [https://mail.kde.org/mailman/listinfo/kde-devel kde-devel mailing list] is the primary development mailing list. [http://kde.org/support/#mailinglists Learn more about mailing lists].
+
+These are general KDE development communication channels, and you may get directed to a more appropriate place for the project you are interested in. There is a [http://www.kde.org/mailinglists/ list of mailing lists] if you want to find a mailing list for a specific team directly. Many teams have their own real-time chat channels, too.
+
+You can also try looking for the team's section on the [[Main Page]] of this wiki. Many teams have information there for new contributors.
+
+== Source code cross referencing ==
+To search for a class, method, signal name... etc in all KDE repos, KDE uses a code referencing tool to index code in the various KDE repositories, you can search using the web interface available at https://lxr.kde.org/ . This is a very useful tool if you e.g. want to search for code usage examples in existing code... etc.
+
+Usage:
+* From the '''Branch group''' menu, you can select either '''kf5-qt5''', to search the code in the Git ''master'' branches or '''stable-kf5-qt5''' to search only the stable (released) branches
+* There are two search ''modes'':
+** On the '''Identifier search''' page, you can search for (note that this is case sensitive):
+*** class names, e.g. ''RenameDialog'', ''StatJob'', and of course any Qt class (used in KDE code, which is pretty much all of them), ''QLatin1String'', ''QListWidget''
+*** method names, e.g. ''addConfigSources()'' (from the KConfig framework) and signal names e.g. ''mimeTypeFound()''
+** on the '''General search''' page, you can search for strings, e.g. in Dolphin's context menu (accessed by right- clicking any empty space) there is '''Paste Clipboard Contents''', if you want to find in which source file this string is defined, search for '''Paste Clipboard Contents'''; this search includes classes/methods/signals names.
+
+Other ways to search across all of the KDE git repositories:
+* If you have a github.com account. Log into github.com. Go to https://github.com/KDE , in the top left search bar, search for your search term e.g. <code>KMessageBox</code>, select "In this organization".
+* <code>kdesrc-build --src-only</code> will download the source code of more than 300 KDE git repositories in <code>~/kde/src</code>. Search inside this directory. E.g. using Microsoft Visual Studio Code <code>code ~/kde/src</code>, from the vscode main menu > Edit > Find in Files Ctrl+Shift+F.
+
+== Next steps ==
+Sharpen your skills by going through the [https://develop.kde.org/docs/ KDE development tutorials].
+
+After you have had several drama-free patches accepted, a KDE developer is likely to suggest you get a [[Infrastructure/Get a Developer Account|Developer account]], which will allow you to commit directly to KDE projects. With very few limits on where you can commit, you will be expected to act responsibly. At this point, congratulations! You are officially a KDE developer!
+
+== Best practices & other useful information==
+* [[Get Involved/Design/Frequently Discussed Topics|Frequently discussed topics and lessons learned regarding the development of user-facing GUI software]]
+* [[Guidelines_and_HOWTOs/Debugging|Debugging]]
+* [[Guidelines and HOWTOs/UnitTests|Unit testing]]
+* [[Guidelines and HOWTOs/Code_Checking| Validating code]]
+* [[Guidelines and HOWTOs/API Documentation|Writing API documentation]] (related: https://api.kde.org).
+* [[Guidelines and HOWTOs/Licensing|Correctly state license information]]
+* [[Guidelines_and_HOWTOs/Wayland_Porting_Notes|Writing Wayland-friendly code]]
+* [[Guidelines_and_HOWTOs/Making_apps_run_uninstalled|Running applications and their unit tests without first installing them]]
+* [[Infrastructure/GitLab#Testing_someone_else's_merge_request|How to review merge requests]]
+
+== Advanced Topics ==
+This page continues with [[Get_Involved/development/More|more advanced topics]].
