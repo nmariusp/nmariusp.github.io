@@ -131,6 +131,16 @@ doas apk add ninja
 doas apk add pcre-dev
 </pre>
 
+## Make kf6-qt6 plasma-integration not build support for Qt5
+
+Append to kf6-workspace-build-include:
+
+<pre>
+options plasma-integration
+    cmake-options -DBUILD_WITH_QT6=ON -DBUILD_QT5=OFF
+end options
+</pre>
+
 <pre>
 
 
