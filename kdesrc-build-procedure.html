@@ -141,7 +141,34 @@ options plasma-integration
 end options
 </pre>
 
+## Install Qt6 using the Qt online installer from qt.io
+
+Edit ~/kde6/src/kdesrc-build/kdesrc-buildrc:
+
 <pre>
+qtdir  ~/Qt/6.6.0/gcc_64 # Where to install Qt6 if kdesrc-build supplies it
+libname lib
+</pre>
+
+Make gpgme build:
+<pre>
+sudo su
+mkdir -p /home/qt/work
+chown -R username:username /home/qt/work
+ln -s /home/username/Qt/6.6.0/gcc_64 /home/qt/work/install
+ls -la /home/qt/work
+</pre>
+
+Use kdesrc-build kf6-qt6.
+
+<pre>
+
+
+
+
+
+
+
 
 
 
@@ -1079,6 +1106,8 @@ end module
 </pre>
 
 === gpgme fails to build ===
+
+See https://bugs.kde.org/show_bug.cgi?id=472917
 
 # 4. Page https://community.kde.org/Get_Involved/development/IDE_configuration/Qt_Creator
 
