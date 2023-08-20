@@ -133,10 +133,14 @@ doas apk add pcre-dev
 
 ## Make kf6-qt6 plasma-integration not build support for Qt5
 
-Append to kf6-workspace-build-include:
+Append to ~/kde6/src/kdesrc-buildrc
 
 <pre>
 options plasma-integration
+    cmake-options -DBUILD_WITH_QT6=ON -DBUILD_QT5=OFF
+end options
+
+options breeze
     cmake-options -DBUILD_WITH_QT6=ON -DBUILD_QT5=OFF
 end options
 </pre>
