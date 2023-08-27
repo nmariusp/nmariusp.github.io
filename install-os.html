@@ -9,8 +9,10 @@ OS means operating system.
 
 * As usual: download the ISO file, using Virtual Machine Manager create a VM named fedora, 10240 GB RAM, 300 GB SSD, use virt, use maximum possible vcpus minus two (the hardware computer has a CPU with 16 threads, so the VM uses 14 vcpus). Start the VM.
 * In the Fedora installer select custom partitioning, use EXT4 instead of btrfs, do not use a separate /home partition. Create a user named administrator.
-* Survival at the command line. sudo is available, SSH server is already installed but needs to be enabled. `systemctly enable --now sshd`. From now on, I do not need the "Graphical Console" of Virtual Machine Manager. Connect to the VM using ssh `ssh administrator@192.168.122.106`. Advantages: copy/paste of text works, we can resize the terminal that runs SSH as we want, we can continue to use the web browser of the hardware/host computer. `sudo dnf install git emacs-nox mc`.
-* Survival in the Graphical User Interface (GUI). Install xrdp server https://nmariusp.github.io/rdp.html `sudo dnf remove kwrite ; sudo dnf install kate git-gui gitk`
+* Log into KDE Plasma > System Settings > Energy Saving > uncheck "Suspend session Automatically Sleep after 15 min".
+* Survival at the command line. sudo is available, SSH server is already installed but needs to be enabled. `systemctl enable --now sshd`. From now on, I do not need the "Graphical Console" of Virtual Machine Manager. KDE Plasma > Log Out. Connect to the VM using ssh `ssh administrator@192.168.122.106`. Advantages: copy/paste of text works, we can resize the terminal that runs SSH as we want, we can continue to use the web browser of the hardware/host computer. `sudo dnf install git emacs-nox mc`.
+* Survival in the Graphical User Interface (GUI). Install xrdp server https://nmariusp.github.io/rdp.html . Connect to the VM using RDP `xfreerdp /u:administrator /w:1920 /h:1080 /v:192.168.122.168 /video /rfx /network:lan /gfx /dynamic-resolution /sound:sys:pulse`
+<pre>sudo dnf remove kwrite ; sudo dnf install kate git-gui gitk krusader</pre>
 
 # Kubuntu >= 23.04
 
@@ -88,5 +90,15 @@ rc-service sddm start
 
 reboot
 </pre>
+
+# Terraforming KDE Plasma - nmariusp's preferences
+
+* Konsole - hide toolbars: from the Konsole main menu > Settings > Toolbars Shown > uncheck all checkboxes.
+* Start Krusader for the first time. The first time wizard will start. Press the OK button a number of times. Make sure that enough packers/unpackers are installed. The Krusader settings (Konfigurator) starts > Panel tab > Layout tab > Layout > Compact. Panel tab > View tab > View modes groupbox > Detailed View > Default icon size 12, Brief View > Default icon size 12. Panel tab > General tab > Tab Bar position: Top. Press the Apply button. General tab > Viewer/Editor tab > Editor group box > Editor "/usr/bin/kate". Press the Apply button. Krusader starts. In the Krusader main menu > Settings > Toolbars > uncheck all check boxes. Krusader main menu > Settings > uncheck "Show Statusbar", uncheck "Show FN Keys Bar", check "Show Embedded Terminal".
+* Right click on the KDE Plasma panel > Enter Edit Mode, click with the mouse where it says "Drag to move" and drag to the left margin of the screen. Press the two red Close buttons to exit Edit Mode.
+* Keep pinned to Task manager just Mozilla Firefox and Krusader.
+* System Settings > search for "mouse" > Cursors > Size: 36. Press the Apply button. System Settings > search for "edge" > Screen Edges > right click on the button in the top left corner of the monitor > No Action. "Trigger quarter tiling in:" "Outer 15%" of the screen. Press the Apply button.
+* Firefox > right click on the toolbar > Customize Toolbar... > drag from the toolbar to the pallete with available buttons all of the items that are not HTML content: two "Flexible Spaces", "Save to Pocket", "Firefox account". Check the check box "Title Bar". From the Toolbars combo box > Bookmarks Toolbar > Never Show. Press the Done button. Firefox Settings > search for "down" > check the check box "Always ask you where to save files". Search for "tabs" > New Windows and Tabs griup box > "Homepage and new windows" > "Blank Page", "New tabs" > "Blank Page".
+* Firefox you should never be logged in to Google when doing Goolge searches. You should never be logged in to YouTube when doing YouTube searches. The only way to accomplish this is to use Firefox private window for 95% of your web browsing. Only use a Firefox non private window for gmail, Google Drive, Google Docs, outlook.office.com, i.e. when you write to websites (e.g. YouTube upload videos) or when the website forces you to use an online account (e.g. banking websites).
 
 # Windows 11 without Secure Boot

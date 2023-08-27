@@ -14,33 +14,20 @@ OS means operating system.
 * YouTube playback with almost acceptable speed and with sound.
 * The speed is so good, that I do most of my work via an RDP connection. Everything is snappy, even using an Integrated Development Environment (IDE).
 
-# Windows
-
-## Server
-On Windows you can enable the RDP server. E.g. right click on Windows Start Menu > System > Rename this PC (advanced) > tab "Remote" > Remote Desktop groupbox > enable "Allow remote connections to this computer". On Windows Server without full GUI experience > sconfig.cmd.
-
-## Client
-Open the app Remote Desktop Connection.
-Or install another RDP client e.g. "Sysinternals Remote Desktop Connection Manager" (rdcman) https://en.wikipedia.org/wiki/Remote_Desktop_Protocol
-
-I prefer to use the app "Sysinternals Remote Desktop Connection Manager" because I need the RDP client to have a window titlebar and window border, I can hide the menu, and after I resize the window, if I select to reconnect, the RDP server's resolution will be changed correctly.
-
-# Linux and FreeBSD
-
-## Server
+# Linux and FreeBSD RDP server xrdp
 
 If you cannot make your X server work correctly, e.g. small resolution. An alternative is to install an RDP server and to connect to this computer from another computer using an RDP client.
 
 Note: on the RDP server, you should log out if you use X11 and you are connected via the computer's keyboard and mouse (aka Ctrl+Alt+F1, aka one of the 8 virtual consoles). Before connecting using an RDP client.
 
-### Kubuntu >= 22.10
+## Kubuntu >= 22.10
 
 <pre>
 sudo apt install xrdp xorgxrdp
 </pre>
 
 
-### Fedora >= 38
+## Fedora >= 38
 
 <pre>
 sudo dnf install xrdp xorgxrdp
@@ -49,7 +36,7 @@ sudo systemctl enable --now xrdp
 sudo reboot
 </pre>
 
-### EndeavourOS with KDE Plasma installed from the OS installer, Arch Linux installed using archinstall with the option "desktop, kde" from the OS installer
+## EndeavourOS with KDE Plasma installed from the OS installer, Arch Linux installed using archinstall with the option "desktop, kde" from the OS installer
 
 If yay is not installed, such as in Arch Linux, install yay from AUR https://aur.archlinux.org/packages/yay https://wiki.archlinux.org/title/Arch_User_Repository :
 <pre>
@@ -79,7 +66,7 @@ export DESKTOP_SESSION=plasma
 /usr/lib/plasma-dbus-run-session-if-needed startplasma-x11
 </pre>
 
-### FreeBSD 13.2
+## FreeBSD >= 13.2
 
 I installed FreeBSD 13.2 using FreeBSD-13.2-RELEASE-amd64-disc1.iso.
 In the installer, I created a user named "administrator" and added this user to the user group "wheel".
@@ -128,7 +115,7 @@ chmod +x ~/startwm.sh
 # pkg install firefox
 </pre>
 
-### Alpine Linux
+## Alpine Linux
 
 I installed Alpine Linux 3.18 using alpine-standard-3.18.2-x86_64.iso. As per https://docs.alpinelinux.org/user-handbook/0.1a/index.html , using full setup-alpine, use default mirror, add "community" repository.
 In the installer, I created a user named "administrator" and the user can use "doas".
@@ -169,7 +156,8 @@ exec startplasma-x11
 reboot
 </pre>
 
-## Client
+# Linux and FreeBSD client xfreerdp
+
 Install from your OS the binary package `freerdp`.
 
 Run:
@@ -181,7 +169,7 @@ Note down any of the command line parameters that you might need.
 
 Use a command line like:
 <pre>
-xfreerdp /u:admin /w:1920 /h:1080 /v:192.168.122.168 /video /rfx /network:lan /gfx /dynamic-resolution /sound:sys:pulse
+xfreerdp /u:administrator /w:1920 /h:1080 /v:192.168.122.168 /video /rfx /network:lan /gfx /dynamic-resolution /sound:sys:pulse
 </pre>
 
 You can resize the window and the resolution of the RDP server will change correctly.
@@ -190,3 +178,12 @@ Other interesting command line parameters:
 <pre>
 +home-drive
 </pre>
+
+# Windows RDP server
+On Windows you can enable the RDP server. E.g. right click on Windows Start Menu > System > Rename this PC (advanced) > tab "Remote" > Remote Desktop groupbox > enable "Allow remote connections to this computer". On Windows Server without full GUI experience > sconfig.cmd.
+
+# Windows RDP client
+Open the app Remote Desktop Connection.
+Or install another RDP client e.g. "Sysinternals Remote Desktop Connection Manager" (rdcman) https://en.wikipedia.org/wiki/Remote_Desktop_Protocol
+
+I prefer to use the app "Sysinternals Remote Desktop Connection Manager" because I need the RDP client to have a window titlebar and window border, I can hide the menu, and after I resize the window, if I select to reconnect, the RDP server's resolution will be changed correctly.
