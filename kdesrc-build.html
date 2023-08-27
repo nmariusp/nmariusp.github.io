@@ -1,4 +1,4 @@
-<script src="https://rawcdn.githack.com/oscarmorrison/md-page/master/md-page.js"></script><noscript>
+<!--<script src="https://rawcdn.githack.com/oscarmorrison/md-page/master/md-page.js"></script><noscript>-->
 
 # kdesrc-build procedure
 
@@ -49,15 +49,21 @@ cd kdesrc-build
 ./kdesrc-build --initial-setup
 # Press enter when asked "Update your ~/.bashrc? (y/N)".
 mv ~/.config/kdesrc-buildrc .
+cp kdesrc-buildrc kdesrc-buildrc~original
 # Edit the file ~/kde5/src/kdesrc-build/kdesrc-buildrc:
-# A. replace "/home/username/kde5/src/kdesrc-build/" with "".
-# TODO: sed -i
+# A. Replace "/home/username/kde5/src/kdesrc-build/" with "".
+sed -i 's_/home/.*/src/kdesrc-build/__g' kdesrc-buildrc
 
-# B. replace "~/kde/" with "~/kde5/".
-# TODO: sed -i
+# B. Replace "~/kde/" with "~/kde5/".
+sed -i 's_~/kde/_~/kde5/_g' kdesrc-buildrc
+
+# C. Replace "num-cores 4" with the count of your CPU threads (nproc) minus two. E.g. if you have 16 CPU threads, use "num-cores 14".
+
+# D. If you plan to use the C++ debugger, replace "-DCMAKE_BUILD_TYPE=RelWithDebInfo" with "-DCMAKE_BUILD_TYPE=Debug".
 
 # git ignore the file ~/kde5/src/kdesrc-build/kdesrc-buildrc
 echo kdesrc-buildrc >> .git/info/exclude
+echo "kdesrc-buildrc~*" >> .git/info/exclude
 
 # The same for kdesrc-build kf6-qt6
 cd
@@ -66,12 +72,14 @@ cp -r ~/kde5 ~/kde6
 cd ~/kde6/src/kdesrc-build
 
 # Edit the file ~/kde6/src/kdesrc-build/kdesrc-buildrc and replace "5" with "6".
-# sed -i 's/5/6/g' kdesrc-buildrc
+sed -i 's/5/6/g' kdesrc-buildrc
 </pre>
 
 Append to ~/kde6/src/kdesrc-build/kdesrc-buildrc :
 
 <pre>
+cat &lt;&lt;EOL &gt;&gt; ~/kde6/src/kdesrc-build/kdesrc-buildrc
+
 options plasma-integration
     cmake-options -DBUILD_WITH_QT6=ON -DBUILD_QT5=OFF
 end options
@@ -79,6 +87,7 @@ end options
 options breeze
     cmake-options -DBUILD_WITH_QT6=ON -DBUILD_QT5=OFF
 end options
+EOL
 </pre>
 
 `Step 4.` Install enough binary packages from your Linux OS such that you can build KDE Frameworks 5 and KDE Frameworks 6 using kdesrc-build.
