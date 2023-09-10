@@ -23,7 +23,7 @@ Execute <code>~/.opt/clion/bin/clion.sh</code>. E.g.:
 
 Select the radio button "Start trial", click on the "Start Trial" button, click on the "Continue" button.
 
-Alternatively, on Arch Linux you can install the package [https://aur.archlinux.org/packages/clion clion].
+The CLion application is started. To create a desktop entry, from the main menu > Tools > Create Desktop Entry. Now you can start CLion from the start menu (e.g. from the KDE Application Launcher or from krunner).
 
 # Open a KDE project in CLion
 
@@ -39,7 +39,12 @@ num-cores 14
 
 Build a KDE project e.g.
 <pre>
-kdesrc-build kcalc --debug
+kdesrc-build kcalc
+</pre>
+
+Build just the project but with verbose output this time:
+<pre>
+kdesrc-build kcalc --no-src --no-include-dependencies --refresh-build --debug
 </pre>
 
 Look at the output, write down the part similar to:
@@ -60,12 +65,13 @@ run_logged_command(): Module kcalc, Command: cmake -B . -S /home/username/kde/sr
 In the "Welcome to CLion" wizard > "Open" > "/home/username/kde/src/kcalc/CMakeLists.txt" > OK. The dialog "Open Project CMakeLists.txt is a project file. Would you like to open the project?" is shown, select "Open as Project". Enable check box "Trust projects in ~/kde/src" > "Trust Project" button. In the "Open Project Wizard" dialog select "OK".
 
 Look at the the part that you have written down from the output of <code>kdesrc-build kcalc --debug</code>.
-In Settings > Build, Execution, Deployment select the "Debug" CMake "Profile". "Generator:" "Let CMake decide", "Build directory:" "/home/username/kde/build/kcalc".
+In the CLion main menu > File > Settings > Build, Execution, Deployment > CMake > select the "Profile" named "Debug". "Generator:" "Let CMake decide", "Build directory:" "/home/username/kde/build/kcalc". You can find the build directory above in the part "cd /home/username/kde/build/kcalc".
 
 CMake options:
 <pre>
 -G "Unix Makefiles" -DCMAKE_EXPORT_COMPILE_COMMANDS:BOOL=ON -DCMAKE_BUILD_TYPE=Debug -DBUILD_WITH_QT6=ON -DCMAKE_CXX_FLAGS:STRING=-pipe -DCMAKE_INSTALL_PREFIX=/home/username/kde/usr -DCMAKE_PREFIX_PATH=/home/username/Qt/6.6.0/gcc_64
 </pre>
+You can find the value of "CMake options:" above in the part ", Command: cmake -B ". Ignore the command line parameters "-B" and "-S" and paste the rest of the cmake command line into "CMake options:".
 
 Convert using a text editor and text replace:
 <pre>
@@ -138,47 +144,6 @@ Ignore the rest of this wiki page.
 <br/>
 
 == Old ==
-
-Open a new project in CLion. Locate it to the folder with CMakeLists.txt. It will ask how do you want to open the project. Select CMake project.
-
-[[File:Clion open as cmake project.png|frameless|300px|open as cmake project]]
-
-In CMake configuration, choose Debug build. In the Generator, set "Let Cmake decide". In the Build directory, insert the build directory path, for example, "/home/username/kde/build/dolphin".
-
-[[File:Clion build configuration.png|frameless|700px|build configuration]]
-
-In this same window, under CMake options, we must set some important variables such as CMAKE_PREFIX_PATH. If the prefix was in "/home/username/kde", then the CMake options line would look like:
-
-<syntaxhighlight lang="ini">
--DCMAKE_PREFIX_PATH=/home/username/kde/usr
--DCMAKE_MODULE_PATH=/home/username/kde/usr/lib64/cmake:/home/username/kde/usr/lib/cmake
--DQT_PLUGIN_PATH=/home/username/kde/usr/lib64/plugins:/home/username/kde/usr/lib/plugins
--DXDG_DATA_DIRS=/home/username/kde/usr/share
-</syntaxhighlight>
-
-You probably would want to save that to file `~/kde/clion_cmake_options.txt` for future use.
-
-Press OK.
-
-In the run/debug target (in the upper right corner of main window), select "dolphin".
-
-[[File:Clion select run debug configuration.png|frameless|300px|select run debug configuration]]
-
-Expand it and choose Edit.
-
-[[File:Clion go to run debug configuration edit.png|frameless|300px|go to run debug configuration edit]]
-
-The Run/Debug Configurations window will appear.
-
-[[File:Clion run debug configuration.png|frameless|500px|run debug configuration]]
-
-In the Environment variables field click edit button.
-
-You can add variables in there manually or reuse exports from <code>prefix.sh</code> script from build directory.
-
-Note: if you want to modify debugging output messages, you can add corresponding variables there. See [[Guidelines and HOWTOs/Debugging/Using Error Messages#Controlling_Messages]].
-
-[[File:Clion run environment variables.png|frameless|400px|run debug variables configuration]]
 
 === Reusing existing prefix.sh ===
 

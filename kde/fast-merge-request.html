@@ -52,6 +52,11 @@ In the diff viewer I can see that the last two lines in the file
 such that the two .gitignore files are identical.
 Then I do a MR like https://invent.kde.org/graphics/kamera/-/merge_requests/5
 
+# Fix proofreading, grammar, spellchecking issues in the source code
+
+Build a KDE git repository using kdesrc-build. Open it in the IDE [JetBrains CLion](clion.html). From CLion main menu > Code > Inspect Code... > Specify Inspection Scope dialog > Inspection Scope select the radio button "Whole project" > press the Analyze button.
+In the bottom left button "Problems Alt+1" > Inspections on Project tab > Inspection Results > Proofreading.
+
 # C++
 
 ## Fix g++ C++ compiler warning
@@ -131,6 +136,10 @@ Disables the cppcheck warning "kalk/knumber/tests/knumbertest.cpp:678: Same expr
 
 After you have fixed all of the cppcheck warnings that you can. After you have suppressed in source code using comments all the cppcheck warnings that the developer wants to be suppressed. Create a cppcheck command line that returns success (exit status zero). And do a Merge Request such that the Continuous Integration (CI) will make sure that cppcheck returns success. E.g. https://invent.kde.org/plasma-mobile/kalk/-/merge_requests/43
 </pre>
+
+## Fix CLion static analysis issue
+
+Build a KDE git repository using kdesrc-build. Open it in the IDE [JetBrains CLion](clion.html). From CLion main menu > Code > Inspect Code... > Specify Inspection Scope dialog > Inspection Scope select the radio button "Whole project" > press the Analyze button.
 
 ## Fix KDE clazy static analysis issue
 <pre>
