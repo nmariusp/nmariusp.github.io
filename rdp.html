@@ -1,6 +1,7 @@
 <script src="https://rawcdn.githack.com/oscarmorrison/md-page/master/md-page.js"></script><noscript>
 
-# How to install xrdp, the RDP server
+# Remote Desktop Protocol (RDP) is better than VNC, Virtual Box, QEMU etc.
+# How to install the RDP server xrdp
 
 # Glossary
 RDP is the Remote Desktop Protocol. https://en.wikipedia.org/wiki/Remote_Desktop_Protocol
@@ -9,8 +10,8 @@ OS means operating system.
 
 # RDP features
 
-* Resizing the RDP client window, changes the resolution of the RDP server. The Microsoft Windows RDP server does not support this feature.
-* Copy/paste of text and maybe even files.
+* Resizing the window of the freerdp RDP client, changes the resolution of the RDP server. If you use the RDP client rdcman, resize the window or rdcman, then reconnect the RDP connection.
+* Copy/paste of text works OK.
 * YouTube playback with almost acceptable speed and with sound.
 * The speed is so good, that I do most of my work via an RDP connection. Everything is snappy, even using an Integrated Development Environment (IDE).
 
@@ -180,7 +181,7 @@ Other interesting command line parameters:
 </pre>
 
 # Windows RDP server
-On Windows you can enable the RDP server. E.g. right click on Windows Start Menu > System > Rename this PC (advanced) > tab "Remote" > Remote Desktop groupbox > enable "Allow remote connections to this computer". On Windows Server without full GUI experience > sconfig.cmd.
+On the Windows OS you can enable the RDP server. E.g. right click on Windows Start Menu > System > Rename this PC (advanced) > tab "Remote" > Remote Desktop groupbox > enable "Allow remote connections to this computer". On Windows Server without full GUI experience > sconfig.cmd.
 
 # Windows RDP client
 Open the app Remote Desktop Connection.
