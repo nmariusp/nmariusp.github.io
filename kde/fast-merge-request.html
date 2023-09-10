@@ -27,64 +27,39 @@ kdesrc-build kcalc --no-src --no-include-dependencies --refresh-build --debug |&
 In the web browser create a pastebin. E.g. https://pastebin.centos.org/ Paste the contents of the file ~/a.txt.
 Paste the URL of the new pastebin in the KDE matrix channel when requesting help.
 
-# Spell check all GUI strings
-
-The KDE git repos use GNU gettext and *.po files for translating the Graphical User Interface
-elements such as buttons and menus.
-Look through all of the KDE git repos, through all of the en*.po files
-and make sure that there are no typos.
-
-E.g. build all KDE git repos using kdesrc-build. Run:
-kdesrc-build
-without parameters.
-In konsole:
-cd ~/kde/src
-grep --include=*.po -r msgid . | grep /en.*/ | sort -u | sed 's/[^a-zA-Z ]/ /g' | tr 'A-Z ' 'a-z\n' | grep '[a-z]' | sort -u | comm -23 - <(sort /usr/share/dict/words) > ~/GuiWordsNotInDictionary.txt
-kate ~/GuiWordsNotInDictionary.txt
-
-E.g. we find the probably wrong word "disactived".
-In konsole:
-cd ~/kde/src
-code .
-In VS Code:
-Search for the word "disactived". Files to exclude "*.po".
-There is just one single result:
-~/kde/src/clementine/src/widgets/osd.cpp
-line 251 "tr("Wii Remote %1: disactived")".
-You edit file ~/kde/src/clementine/src/widgets/osd.cpp and replace:
-disactived
-with:
-deactivated
-With just this one line change in the source code, you do one git commit and one MR.
-
 # Just running kdesrc-build should not create "Unstaged Changes" in the local clone of a KDE git repo
 Build all the KDE git repositories using kdesrc-build. Run:
+<pre>
 kdesrc-build
+</pre>
 You should not see displayed the text:
+<pre>
 * You had local changes to <ModuleName>, which have been re-applied.
+</pre>
 
 In this case the issue is probably that the .gitignore file in the git repo is outdated.
 E.g.
 Install meld.
 Let's say that kcalc is the git repo that reproduces this issue. You should have seen the text:
 "* You had local changes to kcalc, which have been re-applied."
-E.g. in ~/.config/kdesrc-buildrc I have:
-directory-layout invent
 In konsole: I would run:
-meld ~/kde/src/frameworks/kconfig/.gitignore ~/kde/src/utilities/kcalc/.gitignore
+<pre>
+meld ~/kde/src/kconfig/.gitignore ~/kde/src/kcalc/.gitignore
+</pre>
 In the diff viewer I can see that the last two lines in the file
 ~/kde/src/frameworks/kconfig/.gitignore are new and do not exist yet in
 ~/kde/src/utilities/kcalc/.gitignore. I copy the new lines to ~/kde/src/utilities/kcalc/.gitignore
 such that the two .gitignore files are identical.
 Then I do a MR like https://invent.kde.org/graphics/kamera/-/merge_requests/5
 
-
 # C++
 
 ## Fix g++ C++ compiler warning
 
 In konsole:
+<pre>
 CXX=g++ kdesrc-build kcalc --debug |& tee ~/buildoutput_gxx.txt
+</pre>
 
 Open the file ~/buildoutput.txt in a text editor. E.g. kate.
 Search for the string "warning: ". It should appear tens of thousands of times.
@@ -92,12 +67,14 @@ Pick a build warning that seems simple enough to you. Invest time to fix one bui
 Test that your fix is OK.
 E.g. for kcalc built as shown above (i.e. in ~/.config/kdesrc-buildrc I have: "directory-layout invent").
 In konsole:
-rm -rf ~/kde/build/utilities/kcalc
-kdesrc-build kcalc --no-src --no-include-dependencies --debug
+<pre>
+rm -rf ~/kde/build/kcalc
+kdesrc-build kcalc --no-src --no-include-dependencies --debug --refresh-build
 # Make sure there are no errors
-cd ~/kde/build/utilities/kcalc
+cd ~/kde/build/kcalc
 make test
 # Make sure there are no errors
+</pre>
 
 If everything is OK, fix a single g++ build warning,
 do a single git commit and do a single MR.
@@ -106,31 +83,32 @@ Again, one MR should contain just one git commit.
 And one git commit should contain only a single type of fixes (e.g. one type of fix),
 with only handful of source code lines changed (e.g. only one line changed).
 
-=== Fix clang++ C++ compiler warning ===
-<pre  style="white-space: pre-wrap; white-space: -moz-pre-wrap; white-space: -pre-wrap; white-space: -o-pre-wrap; word-wrap: normal;">
+## Fix clang++ C++ compiler warning
+
 Do exactly as for g++ above.
 Replace the first command line with:
+<pre>
 CXX=clang++ kdesrc-build kcalc --debug |& tee ~/buildoutput_clangxx.txt
 </pre>
 
-=== Fix clangd C++ compiler warning ===
+## Fix clangd C++ compiler warning
 
-=== Fix Clang-Tidy static analysis issue ===
-<pre  style="white-space: pre-wrap; white-space: -moz-pre-wrap; white-space: -pre-wrap; white-space: -o-pre-wrap; word-wrap: normal;">
+## Fix Clang-Tidy static analysis issue
+<pre>
 Build a KDE git repository using kdesrc-build. Open it in the IDE Qt Creator.
 From Qt Creator main menu > Analyze > Clang-Tidy and Clazy... > press the Analyze button.
 
 https://www.google.com/search?q=clang-tidy
 </pre>
 
-=== Fix PVS-Studio static analysis issue ===
-<pre  style="white-space: pre-wrap; white-space: -moz-pre-wrap; white-space: -pre-wrap; white-space: -o-pre-wrap; word-wrap: normal;">
+## Fix PVS-Studio static analysis issue
+<pre>
 https://www.youtube.com/watch?v=NHwPhaIfrZ4
 https://www.youtube.com/watch?v=XInpWKwkn4w
 </pre>
 
-=== Fix Cppcheck static analysis issue ===
-<pre  style="white-space: pre-wrap; white-space: -moz-pre-wrap; white-space: -pre-wrap; white-space: -o-pre-wrap; word-wrap: normal;">
+## Fix Cppcheck static analysis issue
+<pre>
 https://en.wikipedia.org/wiki/Cppcheck
 https://www.youtube.com/watch?v=5OYvQ4Mi_1I
 https://www.youtube.com/watch?v=1TSeSVDI3_s
@@ -154,17 +132,17 @@ Disables the cppcheck warning "kalk/knumber/tests/knumbertest.cpp:678: Same expr
 After you have fixed all of the cppcheck warnings that you can. After you have suppressed in source code using comments all the cppcheck warnings that the developer wants to be suppressed. Create a cppcheck command line that returns success (exit status zero). And do a Merge Request such that the Continuous Integration (CI) will make sure that cppcheck returns success. E.g. https://invent.kde.org/plasma-mobile/kalk/-/merge_requests/43
 </pre>
 
-=== Fix KDE clazy static analysis issue ===
-<pre  style="white-space: pre-wrap; white-space: -moz-pre-wrap; white-space: -pre-wrap; white-space: -o-pre-wrap; word-wrap: normal;">
+## Fix KDE clazy static analysis issue
+<pre>
 Build a KDE git repository using kdesrc-build. Open it in the IDE Qt Creator.
 From Qt Creator main menu > Analyze > Clang-Tidy and Clazy... > press the Analyze button.
 
 https://www.youtube.com/watch?v=Z6MENrBRYJI
 </pre>
 
-=== Fix static analysis issue using Allen Winter's krazy ===
+## Fix static analysis issue using Allen Winter's krazy
 
-<pre  style="white-space: pre-wrap; white-space: -moz-pre-wrap; white-space: -pre-wrap; white-space: -o-pre-wrap; word-wrap: normal;">
+<pre>
 Install krazy:
 
 # Read https://github.com/Krazy-collection/krazy/blob/master/Install.txt
@@ -203,21 +181,21 @@ krazy2 --brief --check-sets c++,qt5,kde5,foss --explain ~/kde/src/kconfig/src/co
 find ~/kde/src -type f -name "*.cpp" -print -exec bash -c  'echo "{}"; krazy2 --brief --check-sets c++,qt5,kde5,foss --explain "{}" ' \; |& tee ~/a.txt
 </pre>
 
-=== Use the new Qt signal slot syntax ===
+## Use the new Qt signal slot syntax
 
 https://wiki.qt.io/New_Signal_Slot_Syntax
 
-== Fix deprecation issue ==
+# Fix deprecation issue
 
 E.g. kDebug, kWarning and other symbols from ~/kde/usr/include/KF5/KDELibs4Support/kdebug.h are deprecated. Replace with e.g. the symbols in the family of qDebug from ~/kde/usr/include/QtCore/qlogging.h and ~/kde/usr/include/QtCore/qdebug.h .
 
 E.g. run kdesrc-build without parameters, this will git clone and build all KDE git repositories. Search in ~/kde/src (i.e. in all the KDE git repositories) using e.g. VS Code for a deprecated symbol. You find an affected source code file in the git repository X. Open that git repository correctly in Qt Creator. Make sure that the deprecated symbol really is the one you thought it is. Replace the deprecated symbol. Build, test, git commit, MR.
 
-== QML ==
+# QML
 
-=== qmllint ===
+## qmllint
 
-<pre  style="white-space: pre-wrap; white-space: -moz-pre-wrap; white-space: -pre-wrap; white-space: -o-pre-wrap; word-wrap: normal;">
+<pre>
 # Get the source code of all of the KDE git repositories using kdesrc-build:
 kdesrc-build --src-only
 cd ~/kde/src
@@ -228,9 +206,9 @@ find . -type f -name "*.qml" -exec qmllint \{\} +
 
 Note: Once the qmllint installed from you Linux distribution's packages has the feature "You can now ignore individual warnings by adding "// qmllint disable" in the line causing it. You may also specify one or more warning type to ignore ("// qmllint disable warningtype1 warningtype2...") which is preferable. This can also be done for entire blocks of code by using "// qmllint disable" in an empty line and ending it with "// qmllint enable"" https://codereview.qt-project.org/c/qt/qtdeclarative/+/351372/6 . Then we will be able to add comments in the "*.qml" files that have qmllint warnings. The end goal is that running qmllint on all of the "*.qml" files from all of the KDE git repositories should not show any qmllint warnings.
 
-=== qmlscene ===
+## qmlscene
 
-<pre  style="white-space: pre-wrap; white-space: -moz-pre-wrap; white-space: -pre-wrap; white-space: -o-pre-wrap; word-wrap: normal;">
+<pre>
 # This is an advanced topic.
 # Get the source code of all of the KDE git repositories using kdesrc-build:
 kdesrc-build --src-only
@@ -243,9 +221,9 @@ kate ~/a.txt &
 # Make sure that the list of warnings returned today is not longer than the list of warnings returned in a previous day.
 </pre>
 
-== CMake ==
+# CMake
 
-=== cmakelint ===
+## cmakelint
 
 Install https://github.com/cmake-lint/cmake-lint .
 
@@ -261,8 +239,8 @@ for i in `find . -type f -name "*.cmake"`; do cmakelint "$i"; done &> ~/b.txt
 kate ~/b.txt &
 </pre>
 
-=== Call the cmake_minimum_required() command at the beginning of the top-level CMakeLists.txt file ===
-<pre  style="white-space: pre-wrap; white-space: -moz-pre-wrap; white-space: -pre-wrap; white-space: -o-pre-wrap; word-wrap: normal;">
+## Call the cmake_minimum_required() command at the beginning of the top-level CMakeLists.txt file
+<pre>
 * https://cmake.org/cmake/help/latest/command/cmake_minimum_required.html :
 "Note Call the cmake_minimum_required() command at the beginning of the
 top-level CMakeLists.txt file even before calling the project() command.
@@ -296,11 +274,11 @@ git repo outside invent.kde.org. Fix the issues in third party libraries in thei
 upstream git repo.
 </pre>
 
-== KDE wiki ==
+# KDE wiki
 You should probably not edit old or archived wiki pages. E.g. https://community.kde.org/Schedules/Applications/17.04_Feature_Plan Do not edit wiki pages about an event from 10 years ago, e.g. https://community.kde.org/KDE_PIM/Meetings/Osnabrueck_4. Do not edit wiki pages about old technologies e.g. maemo, QtWebKit, KDE 4, Qt4, QBS etc.
 
-=== Spell check and grammar check a random KDE wiki page ===
-<pre  style="white-space: pre-wrap; white-space: -moz-pre-wrap; white-space: -pre-wrap; white-space: -o-pre-wrap; word-wrap: normal;">
+## Spell check and grammar check a random KDE wiki page
+<pre>
 E.g.
 Create a new Google Doc named “SpellCheck”.
 In the web browser:
@@ -316,8 +294,8 @@ with:
 In the web browser: edit the KDE wiki page to fix the spelling or grammar error.
 </pre>
 
-=== In a random KDE wiki page, URL links should work correctly ===
-<pre  style="white-space: pre-wrap; white-space: -moz-pre-wrap; white-space: -pre-wrap; white-space: -o-pre-wrap; word-wrap: normal;">
+## In a random KDE wiki page, URL links should work correctly
+<pre>
 E.g.
 In the web browser:
 https://community.kde.org/index.php?title=Special:Random
@@ -337,8 +315,8 @@ I.e. https://apps.kde.org/rkward/ .
 This URL is probably better than the other possibility: https://rkward.kde.org/ .
 </pre>
 
-=== In a random KDE wiki page, the wiki markup should be correct ===
-<pre  style="white-space: pre-wrap; white-space: -moz-pre-wrap; white-space: -pre-wrap; white-space: -o-pre-wrap; word-wrap: normal;">
+## In a random KDE wiki page, the wiki markup should be correct
+<pre>
 Learn wikipedia/mediawiki wiki markup syntax. E.g. https://www.mediawiki.org/wiki/Help:Formatting , https://www.mediawiki.org/wiki/Cheatsheet
 
 E.g.
@@ -352,8 +330,8 @@ You see that "=" is used instead of "==". https://www.mediawiki.org/wiki/Help:Fo
 E.g. https://community.kde.org/index.php?title=Guidelines_and_HOWTOs%2FBug_triaging&type=revision&diff=95496&oldid=95495
 </pre>
 
-== KDE Craft ==
-<pre  style="white-space: pre-wrap; white-space: -moz-pre-wrap; white-space: -pre-wrap; white-space: -o-pre-wrap; word-wrap: normal;">
+# KDE Craft
+<pre>
 Besides kdesrc-build. KDE has another tool that can build KDE git repos: KDE Craft.
 https://community.kde.org/Craft
 
@@ -366,8 +344,8 @@ craft kcalc
 Run the newly built/downloaded and installed kcalc.
 </pre>
 
-== Run executable using a run time analyzer ==
-<pre  style="white-space: pre-wrap; white-space: -moz-pre-wrap; white-space: -pre-wrap; white-space: -o-pre-wrap; word-wrap: normal;">
+# Run executable using a run time analyzer
+<pre>
 This is neither easy, nor suitable for beginners.
 
 Build a KDE git repo that is not a framework or a library.
@@ -387,3 +365,35 @@ And if the issue is not in Mesa or in Qt.
 But the issue is in one of the KDE git repos, e.g. a memory leak.
 valgrind will say the line where the leak occurs.
 </pre>
+
+# Spell check all GUI strings
+
+The KDE git repos use GNU gettext and *.po files for translating the Graphical User Interface
+elements such as buttons and menus.
+Look through all of the KDE git repos, through all of the en*.po files
+and make sure that there are no typos.
+
+E.g. build all KDE git repos using kdesrc-build. Run:
+kdesrc-build
+without parameters.
+In konsole:
+<pre>
+cd ~/kde/src
+grep --include=*.po -r msgid . | grep /en.*/ | sort -u | sed 's/[^a-zA-Z ]/ /g' | tr 'A-Z ' 'a-z\n' | grep '[a-z]' | sort -u | comm -23 - <(sort /usr/share/dict/words) > ~/GuiWordsNotInDictionary.txt
+kate ~/GuiWordsNotInDictionary.txt
+</pre>
+
+E.g. we find the probably wrong word "disactived".
+In konsole:
+cd ~/kde/src
+code .
+In VS Code:
+Search for the word "disactived". Files to exclude "*.po".
+There is just one single result:
+~/kde/src/clementine/src/widgets/osd.cpp
+line 251 "tr("Wii Remote %1: disactived")".
+You edit file ~/kde/src/clementine/src/widgets/osd.cpp and replace:
+disactived
+with:
+deactivated
+With just this one line change in the source code, you do one git commit and one MR.
