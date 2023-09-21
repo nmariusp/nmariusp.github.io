@@ -3,7 +3,8 @@
 # How to install Linux and other operating systems (OS)
 
 # Glossary
-OS means operating system.
+OS = operating system.
+VM = virtual machine.
 
 # Fedora KDE Spin >= 38
 
@@ -19,6 +20,36 @@ OS means operating system.
 # KDE neon
 
 # EndeavourOS with KDE Plasma installed from the OS installer, Arch Linux installed using archinstall with the option "desktop, kde" from the OS installer
+
+# openSUSE Tumbleweed
+
+In the installer: I have selected "Desktop with KDE Plasma". I have disabled the firewall and enabled the ssh server. I have created a user named administrator and selected the checkbox that makes the user administrator a sudoer.
+I do not connect at all to the VM using the virtualization software's graphical console. I only connect to the VM using an ssh client or using an RDP client.
+
+<pre>
+ssh administrator@192.68.122.6
+sudo su
+zypper update
+# Surviving at the command line:
+zypper install emacs-nox mc git
+# Install the RDP server xrdp.
+sudo zypper install xrdp xorgxrdp
+sudo systemctl enable --now xrdp
+</pre>
+
+From another terminal, I connect via an RDP client.
+Inside the window of the RDP client, KDE Plasma starts, open konsole.
+
+<pre>
+* In the openSUSE welcome screen uncheck "Show on next startup", press the Close button.
+* In the lower left side, in the virtual desktop switcher, right click on all virtual desktops except the first > "Remove Virtual Desktop". The virtual desktop switcher disappears from the KDE Plasma desktop panel.
+
+#Surviving in GUI:
+sudo su
+zypper install git-gui gitk krusader
+
+* In the start menu, right click on some applications > Uninstall or Manage Add-Ons... and uninstall them. E.g. KMail, Kontact, KOrganizer, KTnef, maybe libre office etc.
+</pre>
 
 # FreeBSD >= 13.2
 
@@ -36,7 +67,7 @@ su -
 pkg install bash emacs-nox mc git
 chsh -s /usr/local/bin/bash
 
-#Surviving in GUI:
+# Surviving in GUI:
 
 pkg install xorg
 pw groupmod video -m administrator
@@ -93,13 +124,18 @@ reboot
 
 # Terraforming KDE Plasma - nmariusp's preferences
 
-* Konsole - hide toolbars: from the Konsole main menu > Settings > Toolbars Shown > uncheck all checkboxes.
-* Start Krusader for the first time. The first time wizard will start. Press the OK button a number of times. Make sure that enough packers/unpackers are installed. The Krusader settings (Konfigurator) starts > Panel tab > Layout tab > Layout > Compact. Panel tab > View tab > View modes groupbox > Detailed View > Default icon size 12, Brief View > Default icon size 12. Panel tab > General tab > Tab Bar position: Top. Press the Apply button. General tab > Viewer/Editor tab > Editor group box > Editor "/usr/bin/kate". Press the Apply button. Krusader starts. In the Krusader main menu > Settings > Toolbars > uncheck all check boxes. Krusader main menu > Settings > uncheck "Show Statusbar", uncheck "Show FN Keys Bar", check "Show Embedded Terminal".
-* Right click on the KDE Plasma panel > Enter Edit Mode, click with the mouse where it says "Drag to move" and drag to the left margin of the screen. Press the two red Close buttons to exit Edit Mode.
-* Keep pinned to Task manager just Mozilla Firefox and Krusader.
-* System Settings > search for "mouse" > Cursors > Size: 36. Press the Apply button. System Settings > search for "edge" > Screen Edges > right click on the button in the top left corner of the monitor > No Action. "Trigger quarter tiling in:" "Outer 15%" of the screen. Press the Apply button.
-* Firefox > right click on the toolbar > Customize Toolbar... > drag from the toolbar to the pallete with available buttons all of the items that are not HTML content: two "Flexible Spaces", "Save to Pocket", "Firefox account". Check the check box "Title Bar". From the Toolbars combo box > Bookmarks Toolbar > Never Show. Press the Done button. Firefox Settings > search for "down" > check the check box "Always ask you where to save files". Search for "tabs" > New Windows and Tabs griup box > "Homepage and new windows" > "Blank Page", "New tabs" > "Blank Page".
-* Firefox you should never be logged in to Google when doing Goolge searches. You should never be logged in to YouTube when doing YouTube searches. The only way to accomplish this is to use Firefox private window for 95% of your web browsing. Only use a Firefox non private window for gmail, Google Drive, Google Docs, outlook.office.com, i.e. when you write to websites (e.g. YouTube upload videos) or when the website forces you to use an online account (e.g. banking websites).
-* Kate > main menu > Settings > Configure Kate > search for "welc" > uncheck the check box "Show welcome view for new windows". Press the "Save" button.
+* Konsole. Hide toolbars: from the Konsole main menu > Settings > Toolbars Shown > uncheck all checkboxes.
+Settings > Tab Bar / Splitters > Behavior tab > enable the check box "Close tab on middle-click".
+Add new profile, make it the default profile, configure it to be able to press Ctrl+Click on file paths.
+* Krusader. Start Krusader for the first time. The first time wizard will start. Press the OK button a number of times. Make sure that enough packers/unpackers are installed.
+The Krusader settings (Konfigurator) starts > Panel tab > Layout tab > Layout > Compact. Panel tab > View tab > View modes groupbox > Detailed View > Default icon size 12, Brief View > Default icon size 12. Panel tab > General tab > Tab Bar position: Top. Press the Apply button. General tab > Viewer/Editor tab > Editor group box > Editor "/usr/bin/kate". Press the Apply button.
+Krusader starts. In the Krusader main menu > Settings > Toolbars > uncheck all check boxes. Krusader main menu > Settings > uncheck "Show Statusbar", uncheck "Show FN Keys Bar", check "Show Embedded Terminal".
+* KDE Plasma panel. Right click on the KDE Plasma panel > Enter Edit Mode, click with the mouse where it says "Drag to move" and drag to the left margin of the screen. Press the two red Close buttons to exit Edit Mode.
+Keep pinned to Task manager just Mozilla Firefox and Krusader.
+* System Settings. System Settings > search for "mouse" > Cursors > Size: 36. Press the Apply button. System Settings > search for "edge" > Screen Edges > right click on the button in the top left corner of the monitor > No Action. "Trigger quarter tiling in:" "Outer 15%" of the screen. Press the Apply button.
+* Firefox. Firefox > right click on the toolbar > Customize Toolbar... > drag from the toolbar to the pallete with available buttons all of the items that are not HTML content: two "Flexible Spaces", "Save to Pocket", "Firefox account". Check the check box "Title Bar". From the Toolbars combo box > Bookmarks Toolbar > Never Show. Press the Done button.
+Firefox Settings > search for "down" > check the check box "Always ask you where to save files". Search for "tabs" > New Windows and Tabs griup box > "Homepage and new windows" > "Blank Page", "New tabs" > "Blank Page".
+* Firefox private window. In Firefox, you should never be logged in to Google when doing Goolge searches. You should never be logged in to YouTube when doing YouTube searches. The only way to accomplish this is to use Firefox private window for 95% of your web browsing. Only use a Firefox non private window for gmail, Google Drive, Google Docs, outlook.office.com, i.e. when you write to websites (e.g. YouTube upload videos) or when the website forces you to use an online account (e.g. banking websites).
+* Kate. In Kate main menu > Settings > Configure Kate > search for "welc" > uncheck the check box "Show welcome view for new windows". Press the "OK" button.
 
 # Windows 11 without Secure Boot

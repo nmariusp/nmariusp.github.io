@@ -27,7 +27,6 @@ Note: on the RDP server, you should log out if you use X11 and you are connected
 sudo apt install xrdp xorgxrdp
 </pre>
 
-
 ## Fedora >= 38
 
 <pre>
@@ -65,6 +64,16 @@ cat ~/.xinitrc
 # Should say:
 export DESKTOP_SESSION=plasma
 /usr/lib/plasma-dbus-run-session-if-needed startplasma-x11
+</pre>
+
+## openSUSE Tumbleweed
+
+In the installer I have selected "Desktop with KDE Plasma", I have disabled the firewall and enabled the ssh server.
+I connect using ssh and run:
+
+<pre>
+sudo zypper install xrdp xorgxrdp
+sudo systemctl enable --now xrdp
 </pre>
 
 ## FreeBSD >= 13.2
