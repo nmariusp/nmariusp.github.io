@@ -12,10 +12,11 @@ OS means operating system.
 
 # RDP features
 
-* Resizing the window of the freerdp RDP client, changes the resolution of the RDP server. If you use the RDP client rdcman, resize the window or rdcman, then reconnect the RDP connection.
+* Resizing the window of the freerdp RDP client changes the resolution of the RDP server. If you use the RDP client rdcman, resize the window of rdcman, then reconnect the RDP connection. The xfreerdp command line parameter is "/dynamic-resolution".
 * Copy/paste of text works OK.
-* YouTube playback with almost acceptable speed and with sound.
-* The speed is so good, that I do most of my work via an RDP connection. Everything is snappy, even using an Integrated Development Environment (IDE).
+* YouTube playback with almost acceptable speed and with sound. The xfreerdp command line parameter is "/video /rfx /gfx /sound:sys:pulse".
+* The speed is so good, that I do most of my work via an RDP connection. Everything is snappy, even using an Integrated Development Environment (IDE). The xfreerdp command line parameter is "/network:lan".
+* The home directory from the machine where the RDP client runs can be made available to the machine where the RDP server runs via Samba or Windows shares (the share named "\\tsclient"). The xfreerdp command line parameter is "+home-drive".
 
 # Linux and FreeBSD RDP server xrdp
 
