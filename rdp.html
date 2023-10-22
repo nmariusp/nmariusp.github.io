@@ -49,7 +49,7 @@ Screen recording https://www.youtube.com/watch?v=qu6z-X_hngI , https://www.youtu
 
 If yay is not installed, such as in Arch Linux, install yay from AUR https://aur.archlinux.org/packages/yay https://wiki.archlinux.org/title/Arch_User_Repository :
 <pre>
-pacman -S base-devel
+sudo pacman -S base-devel go
 mkdir -p ~/work/aur ; cd ~/work/aur
 git clone https://aur.archlinux.org/yay.git
 cd yay
@@ -63,7 +63,7 @@ Then:
 yay xrdp
 yay xorgxrdp
 
-systemctl enable --now xrdp
+sudo systemctl enable --now xrdp
 
 cat /etc/X11/Xwrapper.config
 # Should say:
