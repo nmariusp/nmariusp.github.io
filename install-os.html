@@ -8,6 +8,8 @@ VM = virtual machine.
 
 # Fedora KDE Spin >= 38
 
+Screen recording https://www.youtube.com/watch?v=Doj8VpTLShs
+
 * As usual: download the ISO file, using Virtual Machine Manager create a VM named fedora, 10240 GB RAM, 300 GB SSD, use virt, use maximum possible vcpus minus two (the hardware computer has a CPU with 16 threads, so the VM uses 14 vcpus). Start the VM.
 * In the Fedora installer select custom partitioning, use EXT4 instead of btrfs, do not use a separate /home partition. Create a user named administrator.
 * Log into KDE Plasma > System Settings > Energy Saving > uncheck "Suspend session Automatically Sleep after 15 min".
@@ -22,6 +24,8 @@ VM = virtual machine.
 # EndeavourOS with KDE Plasma installed from the OS installer, Arch Linux installed using archinstall with the option "desktop, kde" from the OS installer
 
 # openSUSE Tumbleweed
+
+Screen recording https://www.youtube.com/watch?v=tlMefsBArO4
 
 In the installer: I have selected "Desktop with KDE Plasma". I have disabled the firewall and enabled the ssh server. I have created a user named administrator and selected the checkbox that makes the user administrator a sudoer.
 I do not connect at all to the VM using the virtualization software's graphical console. I only connect to the VM using an ssh client or using an RDP client.
@@ -53,6 +57,8 @@ zypper install git-gui gitk krusader
 
 # FreeBSD >= 13.2
 
+Screen recording https://www.youtube.com/watch?v=8MqBnb3Y9JU
+
 I installed FreeBSD 13.2 using FreeBSD-13.2-RELEASE-amd64-disc1.iso.
 In the installer, I created a user named "administrator" and added this user to the user group "wheel".
 
@@ -64,6 +70,7 @@ ssh administrator@192.68.122.6
 su -
 
 # Surviving at the command line:
+pkg # Install the pkg command line app.
 pkg install bash emacs-nox mc git
 chsh -s /usr/local/bin/bash
 
@@ -72,12 +79,15 @@ chsh -s /usr/local/bin/bash
 pkg install xorg
 pw groupmod video -m administrator
 pkg install noto-2.0 sudo
-visudo
+EDITOR=emacs visudo
 # uncomment line:
 %wheel ALL=(ALL:ALL) ALL
+# We are inside emacs. Save the modified file: Ctrl+X S, Ctrl+X C.
 
-# In file /etc/fstab append line
+# In file /etc/fstab append line:
+emacs /etc/fstab
 proc /proc procfs rw 0 0
+# We are inside emacs. Save the modified file: Ctrl+X S, Ctrl+X C.
 
 mount -a
 
@@ -87,9 +97,19 @@ sysctl net.local.stream.recvspace=65536
 sysctl net.local.stream.sendspace=65536
 
 # I followed the instructions from https://download.freebsd.org/doc/en/books/handbook/handbook_en.pdf up to and including the chapter "7.2.1.4. Start KDE Plasma".
+
+# As user administrator:
+chsh -s /usr/local/bin/bash
+emacs ~/.profile
+# Uncomment the line:
+PATH=/sbin:/bin:/usr/sbin:/usr/bin:/usr/local/sbin:/usr/local/bin:$HOME/bin; export PATH
+# Save and exit the text editor.
+# Restart the computer.
 </pre>
 
 ### Alpine Linux
+
+Screen recording https://www.youtube.com/watch?v=d9WXHMfBDT0
 
 I installed Alpine Linux 3.18 using alpine-standard-3.18.2-x86_64.iso. As per https://docs.alpinelinux.org/user-handbook/0.1a/index.html , using full setup-alpine, use default mirror, add "community" repository.
 In the installer, I created a user named "administrator" and the user can use "doas".

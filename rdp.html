@@ -34,7 +34,7 @@ sudo apt install xrdp xorgxrdp
 
 ## Fedora >= 38
 
-Screen recording https://www.youtube.com/watch?v=3Ll0-0qptas
+Screen recording https://www.youtube.com/watch?v=Doj8VpTLShs
 
 <pre>
 sudo dnf install xrdp xorgxrdp
@@ -77,7 +77,7 @@ export DESKTOP_SESSION=plasma
 
 ## openSUSE Tumbleweed
 
-Screen recording https://www.youtube.com/watch?v=nqXzOfiIBYI
+Screen recording https://www.youtube.com/watch?v=tlMefsBArO4
 
 In the installer I have selected "Desktop with KDE Plasma", I have disabled the firewall and enabled the ssh server.
 I connect using ssh and run:
@@ -89,7 +89,7 @@ sudo systemctl enable --now xrdp
 
 ## FreeBSD >= 13.2
 
-Screen recording https://www.youtube.com/watch?v=I6nUd0K26Pw , https://www.youtube.com/watch?v=v2wq0eTnUuc
+Screen recording https://www.youtube.com/watch?v=8MqBnb3Y9JU
 
 I installed FreeBSD 13.2 using FreeBSD-13.2-RELEASE-amd64-disc1.iso.
 In the installer, I created a user named "administrator" and added this user to the user group "wheel".
@@ -102,20 +102,24 @@ ssh administrator@192.68.122.6
 su -
 
 # Surviving at the command line:
+pkg # Install the pkg command line app.
 pkg install bash emacs-nox mc git
 chsh -s /usr/local/bin/bash
 
-#Surviving in GUI:
+# Surviving in GUI:
 
 pkg install xorg
 pw groupmod video -m administrator
 pkg install noto-2.0 sudo
-visudo
+EDITOR=emacs visudo
 # uncomment line:
 %wheel ALL=(ALL:ALL) ALL
+# We are inside emacs. Save the modified file: Ctrl+X S, Ctrl+X C.
 
-# In file /etc/fstab append line
+# In file /etc/fstab append line:
+emacs /etc/fstab
 proc /proc procfs rw 0 0
+# We are inside emacs. Save the modified file: Ctrl+X S, Ctrl+X C.
 
 mount -a
 
@@ -126,6 +130,14 @@ sysctl net.local.stream.sendspace=65536
 
 # I followed the instructions from https://download.freebsd.org/doc/en/books/handbook/handbook_en.pdf up to and including the chapter "7.2.1.4. Start KDE Plasma".
 
+# As user administrator:
+chsh -s /usr/local/bin/bash
+emacs ~/.profile
+# Uncomment the line:
+PATH=/sbin:/bin:/usr/sbin:/usr/bin:/usr/local/sbin:/usr/local/bin:$HOME/bin; export PATH
+# Save and exit the text editor.
+# Restart the computer.
+
 pkg install xrdp xorgxrdp
 sysrc xrdp_enable="YES"
 sysrc xrdp_sesman_enable="YES"
@@ -135,7 +147,8 @@ exec ck-launch-session startplasma-x11
 
 chmod +x ~/startwm.sh
 
-# pkg install firefox
+pkg install firefox
+# Restart the computer.
 </pre>
 
 ## Alpine Linux
