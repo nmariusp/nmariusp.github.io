@@ -10,6 +10,25 @@ See also https://community.kde.org/Get_Involved/development/IDE_configuration/CL
 
 # Install CLion
 
+Instal the app "JetBrains Toolbox" https://www.jetbrains.com/toolbox-app > "Download .tar.gz (Linux 64-bit x86)". A file such as https://download-cdn.jetbrains.com/toolbox/jetbrains-toolbox-2.1.3.18901.tar.gz will be downloaded. Download it to the directory <code>~/Downloads</code>.
+<pre>
+mkdir -p ~/.opt/jetbrains-toolbox
+cd ~/Downloads
+tar -xzvf jetbrains-toolbox-2.1.3.18901.tar.gz -C ~/.opt/jetbrains-toolbox --strip-components=1
+</pre>
+Execute <code>~/.opt/jetbrains-toolbox/jetbrains-toolbox</code>. E.g.:
+<pre>
+~/.opt/jetbrains-toolbox/jetbrains-toolbox &
+</pre>
+
+In your start menu you will now have the application "JetBrains Toolbox", which is actually installed in <code>~/.local/share/JetBrains/Toolbox/bin/jetbrains-toolbox</code>.
+
+From the start menu, open the application "JetBrains Toolbox". From the "Tools" tab > Available > CLion > "Install" button.
+
+In your start menu you will now have the application "CLion A cross-platform C and C++ IDE", which is actually installed in <code>~/.local/share/JetBrains/Toolbox/apps/clion/bin/clion.sh</code>.
+
+## Alternative installation instructions
+
 E.g. from the official webpage of CLion, select "Get Free 30-day Trial". A file such as https://download-cdn.jetbrains.com/cpp/CLion-2023.2.1.tar.gz will be downloaded. Download it to the directory <code>~/Downloads</code>.
 <pre>
 mkdir -p ~/.opt/clion
@@ -21,7 +40,9 @@ Execute <code>~/.opt/clion/bin/clion.sh</code>. E.g.:
 ~/.opt/clion/bin/clion.sh &
 </pre>
 
-Select the radio button "Start trial", click on the "Start Trial" button, click on the "Continue" button.
+## First run
+
+When CLion starts for the first time,select the radio button "Start trial", click on the "Start Trial" button, click on the "Continue" button.
 
 The CLion application is started. To create a desktop entry, from the main menu > Tools > Create Desktop Entry. Now you can start CLion from the start menu (e.g. from the KDE Application Launcher or from krunner).
 
