@@ -6,7 +6,7 @@ External resources https://community.kde.org/Get_Involved/development and https:
 
 If you want to build the latest KDE source code from git, you want to use kdesrc-build.
 
-# Short version of installing (setting up) kdesrc-build for Qt5 (kf5-qt5) and Qt6 (kf6-qt6)
+# Short version of installing (setting up) kdesrc-build for Qt6 (kf6-qt6) and Qt5 (kf5-qt5)
 
 This will allow you to read from the KDE git repositories, i.e. to build software. In order to write to the KDE git repositories additional steps are required.
 
@@ -14,42 +14,73 @@ You only need to set up kdesrc-build once. You can use the resulting kdesrc-buil
 
 Steps:
 
-`Step 1.` Use a Linux operating system (OS) that is better supported by kdesrc-build. I.e. a Linux OS for which "kdesrc-build --initial-setup" has support and a Linux OS that uses the KDE Plasma desktop and has new packages. Alphabetic list of such Linux OSes: Arch, latest Fedora KDE Spin, KDE neon, latest Kubuntu, openSUSE Tumbleweed.
+`Step 1.` Use a Linux operating system (OS) that is better supported by kdesrc-build. I.e. a Linux OS for which "kdesrc-build --initial-setup" has support and a Linux OS that uses the KDE Plasma desktop and has new packages. https://community.kde.org/Get_Involved/development#Operating_system Alphabetic list of such Linux OSes: Arch, latest Fedora KDE Spin, KDE neon, openSUSE Tumbleweed.
 
 If you cannot run the Linux OS on a hardware computer, use a Virtual Machine (VM).
 
 Minimum hardware requirements: 300 GB SSD, 6 GB RAM, 4 CPU threads or virtual CPUs (vCPUs). Recommended 10 GB RAM, 8 CPU threads.
 
-The command line instructions might be specific for different families of Linux OSes. The families of Linux OSes are: Debian (Ubuntu, Kubuntu, KDE neon), Arch (Manjaro, EndeavourOS). When we provide a command line for Debian, that command line is valid for the entire Debian family of Linux OSes.
+The command line instructions might be specific for different families of Linux OSes. The families of Linux OSes are: Arch (Manjaro, EndeavourOS), Debian (Ubuntu, Kubuntu, KDE neon), Fedora, openSUSE. When we provide a command line for Debian, that command line is valid for the entire Debian family of Linux OSes.
 
 Please make sure the `sudo` command works correctly in your Linux OS installation.
 
 `Step 2.`
 
+https://community.kde.org/Get_Involved/development/Set_up_a_development_environment
+
 Arch: <pre>sudo pacman -S git</pre>
 Debian: <pre>sudo apt update && sudo apt install git</pre>
-Fedora: <pre>sudo dnf install git perl</pre>
+Fedora: <pre>sudo dnf install git perl perl-IPC-Cmd perl-MD5 perl-FindBin</pre>
 openSUSE: <pre>sudo zypper refresh && sudo zypper install git</pre>
 
 `Step 3.`
 
 <pre>
+# See https://community.kde.org/Get_Involved/development/Set_up_a_development_environment#Set_up_kdesrc-build
+
+# See https://community.kde.org/Get_Involved/development/More#Two_independent_kdesrc-build_installations_on_the_same_machine:_kf6-qt6_and_kf5-qt5
+
+# See https://community.kde.org/Get_Involved/development/More#Portable_installation_of_kdesrc-build
+
+# Install kdesrc-build Qt6
+
 # Make a backup:
-mv ~/.config/kdesrc-buildrc ~/.config/kdesrc-buildrc~bak
-mv ~/kde ~/kde~bak
+mv ~/.config/kdesrc-buildrc ~/.config/kdesrc-buildrc~bak 2> /dev/null
+mv ~/kde ~/kde~bak 2> /dev/null
+mv ~/kde6 ~/kde6~bak 2> /dev/null
 
-# kdesrc-build kf5-qt5
-mv ~/kde5 ~/kde5~bak
-
-mkdir -p ~/kde5/src
-cd ~/kde5/src/
+mkdir -p ~/kde/src
+cd ~/kde/src/
 git clone https://invent.kde.org/sdk/kdesrc-build.git
 cd kdesrc-build
 
-./kdesrc-build --initial-setup
-# Press enter when asked "Update your ~/.bashrc? (y/N)".
+./kdesrc-build --initial-setup <<< 'N'
+
 mv ~/.config/kdesrc-buildrc .
 cp kdesrc-buildrc kdesrc-buildrc~original
+
+# Edit the file ~/kde/src/kdesrc-build/kdesrc-buildrc:
+# A. Replace "/home/username/kde5/src/kdesrc-build/" with "".
+sed -i 's_/home/.*/src/kdesrc-build/__g' kdesrc-buildrc
+
+# C. Replace "num-cores 4" with the count of your CPU threads (nproc) minus two. E.g. if you have 16 CPU threads, use "num-cores 14".
+
+# D. If you plan to use the C++ debugger, replace "-DCMAKE_BUILD_TYPE=RelWithDebInfo" with "-DCMAKE_BUILD_TYPE=Debug".
+
+# git ignore the file ~/kde/src/kdesrc-build/kdesrc-buildrc~original
+echo "kdesrc-buildrc~*" >> .git/info/exclude
+
+# Install kdesrc-build Qt5
+mv ~/kde5 ~/kde5~bak 2> /dev/null
+mv ~/.config/kdesrc-buildrc ~/.config/kdesrc-buildrc~bak 2> /dev/null
+
+mkdir -p ~/kde5/src
+cd ~/kde5/src
+mv ~/.config/kdesrc-buildrc ./config_kdesrc-buildrc_backup 2> /dev/null
+git clone https://invent.kde.org/sdk/kdesrc-build.git && cd kdesrc-build
+./kdesrc-build --initial-setup <<< 'N'
+mv ~/.config/kdesrc-buildrc .
+
 # Edit the file ~/kde5/src/kdesrc-build/kdesrc-buildrc:
 # A. Replace "/home/username/kde5/src/kdesrc-build/" with "".
 sed -i 's_/home/.*/src/kdesrc-build/__g' kdesrc-buildrc
@@ -61,18 +92,22 @@ sed -i 's_~/kde/_~/kde5/_g' kdesrc-buildrc
 
 # D. If you plan to use the C++ debugger, replace "-DCMAKE_BUILD_TYPE=RelWithDebInfo" with "-DCMAKE_BUILD_TYPE=Debug".
 
-# git ignore the file ~/kde5/src/kdesrc-build/kdesrc-buildrc
-echo kdesrc-buildrc >> .git/info/exclude
-echo "kdesrc-buildrc~*" >> .git/info/exclude
+# E. Replace "6" with "5".
+sed -i 's/6/5/g' kdesrc-buildrc
 
-# The same for kdesrc-build kf6-qt6
-cd
-mv ~/kde6 ~/kde6~bak
-cp -r ~/kde5 ~/kde6
-cd ~/kde6/src/kdesrc-build
+# Make sure that the configuration file
+# ~/kde5/src/kdesrc-build/kdesrc-buildrc looks OK
+# E.g. kate ~/kde5/src/kdesrc-build/kdesrc-buildrc &
 
-# Edit the file ~/kde6/src/kdesrc-build/kdesrc-buildrc and replace "5" with "6".
-sed -i 's/5/6/g' kdesrc-buildrc
+# From now on you will need to be in the directory
+# ~/kde5/src/kdesrc-build before you can run kdesrc-build or kdesrc-run
+
+# E.g.
+cd ~/kde5/src/kdesrc-build
+./kdesrc-build kconfig
+./kdesrc-build kcalc
+./kdesrc-run kcalc
+./kdesrc-build frameworks
 </pre>
 
 Append to ~/kde6/src/kdesrc-build/kdesrc-buildrc :
@@ -103,11 +138,21 @@ sudo dnf builddep appstream
 
 openSUSE: <pre></pre>
 
-`Step 5.` Test the kdesrc-build installations for Qt5 (kf5-qt5) and Qt6 (kf6-qt6).
+`Step 5.` Test the kdesrc-build installations for Qt6 (kf6-qt6) and Qt5 (kf5-qt5).
 
 I recomend this order:
 
 <pre>
+# In a dedicated terminal (e.g. konsole) tab.
+cd ~/kde/src/kdesrc-build
+./kdesrc-build kconfig
+./kdesrc-build kcalc
+./kdesrc-run kcalc
+./kdesrc-build frameworks
+</pre>
+
+<pre>
+# In a dedicated terminal (e.g. konsole) tab.
 cd ~/kde5/src/kdesrc-build
 ./kdesrc-build kconfig
 ./kdesrc-build kcalc
@@ -115,39 +160,82 @@ cd ~/kde5/src/kdesrc-build
 ./kdesrc-build frameworks --ignore-modules=kstatusnotifieritem
 </pre>
 
-<pre>
-cd ~/kde6/src/kdesrc-build
-./kdesrc-build kconfig
-./kdesrc-build kcalc
-./kdesrc-run kcalc
-./kdesrc-build frameworks
-</pre>
+# Ignore everything below
 
-<br/>
-<br/>
-<br/>
-<br/>
-<br/>
-<br/>
-<br/>
-<br/>
-<br/>
-<br/>
-<br/>
-<br/>
-<br/>
-<br/>
-<br/>
-<br/>
-<br/>
-<br/>
-<br/>
-<br/>
-<br/>
-<br/>
-<br/>
-<br/>
-<br/>
+<pre>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</pre>
 
 # Advanced topics
 
