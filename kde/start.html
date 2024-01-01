@@ -12,9 +12,8 @@ https://community.kde.org/index.php?title=Special:Contributions/Nmariusp&offset=
 # Table of contents
 <!-- As per https://stackoverflow.com/questions/11948245/markdown-to-create-pages-and-table-of-contents#answer-33433098 -->
 1. [Introduction](#introduction)
-2. [Parallel track one: Online accounts](#online-accounts)
-3. [Parallel track two: Be able to build all 400 KDE git repositories](#build)
-4. [Parallel track three: Learn Linux, C++, Qt, KDE source code](#learn)
+2. [How to watch my youtube videos](#youtube)
+3. [nmariusp's algorithm "Start programming for KDE"](#algorithm-start-kde)
 5. [Integrated Development Environment, tools, git](#ide)
 6. [Write to the git repositories from the KDE Community](#write-to-git-repo)
 7. [Ideas for Merge Requests that can be done in under half an hour](#fast-merge-request)
@@ -37,7 +36,9 @@ Operating system = OS
 Virtual machine = VM
 Central processing unit = CPU
 
+<a name="youtube"></a>
 # How to watch my youtube videos
+
 My youtube screen recordings are 1080p so you should watch them on your computer not on your phone because my fonts will be too small.
 
 You should download the youtube video on your computer in 720p. Reasons: smaller download, you cause less cost to youtube because no matter how many times you rewatch or you scroll through the video, the bits are downloaded only once.
@@ -54,9 +55,20 @@ Pause and resume the video player often (e.g. with the key "Space" in smplayer o
 
 Please learn the most important keyboard shortcuts of your video player. E.g. for smplayer: Space = Play/Pause, Up Arrow/Down Arrow/Left Arrow/Right Arrow/Page Up/Page Down = scroll through the video, M = mute, F = fullscreen, O (the letter "o") multiple times = various levels of On Screen Display (OSD).
 
-The command line for downloading is here https://docs.google.com/document/d/1pDmMWE8wAgrdrWdwFTeDpZqjnNP89bDwb-2mjHkOwZ0
+The command line for downloading is:
 
+yt-dlp -f 22 https://www.youtube.com/watch?v=X_X1qB061r4
+
+You can search through my youtube screen recordings using a URL like https://www.youtube.com/@nmariusp/search?query=kdesrc-build
+My youtube videos have the month in the video name. If I have more screen recordings about the same topic, then the video with the newer month in the video name will be more up to date.
+
+<a name="algorithm-start-kde"></a>
 # nmariusp's algorithm "Start programming for KDE"
+
+Three of the chapters described below can be done in parallel. There is no dependency between each other:  
+`1.` Parallel track one: Online accounts  
+`2.` Parallel track two: Be able to build all 400 KDE git repositories  
+`3.` Parallel track three: Learn Linux, C++, Qt, KDE source code https://community.kde.org/Get_Involved/development/Learn  
 
 `Step 0.` Can you program? Do you know at least a bit of Python programming? A bit of bash programming (did you use procedures and loops)? Any other programming language?
 
@@ -90,7 +102,7 @@ If I buy better hardware then I do not lose time.
 
 You will run the Linux operating system (OS) either on your hardware machine or in a VM. The CPU architecture should be x86_64 (amd64). I would not use a computer with https://en.wikipedia.org/wiki/Apple_silicon , because running a x86_64 Linux VM would be slow for me. You can connect e.g. via RDP protocol to a computer that has better hardware.
 
-I recommend good hardware, this would be a minimum: The CPU has hardware assisted virtualization (Intel VT-x, AMD-V, etc.). SSD not HDD. You can allocate on the SSD at least 250 GB of space to a Linux VM or a Linux partition. At least 8 GB RAM if you will not use Virtual Machines (VMs), i.e. you will run the Linux OS on your hardware computer. At least 8 CPU threads (vcpus) for the Linux VM.
+I recommend good hardware, this would be a minimum: The CPU has hardware assisted virtualization (Intel VT-x or AMD-V). SSD not HDD. You can allocate on the SSD at least 250 GB of space to a Linux VM or a Linux partition. At least 8 GB RAM if you will not use Virtual Machines (VMs), i.e. you will run the Linux OS on your hardware computer. At least 8 CPU threads (vcpus) for the Linux VM.
 
 Hardware pain points: nvidia GPU, laptop with GPU switching/hybrid graphics, hardware that requires "out of tree" Linux driver kernel modules, monitors with high DPI/high refresh rate/high color and other hardware that is not well supported by the "upstream" Linux kernel and by the rest of the software infrastructure in a Linux OS.
 
@@ -98,26 +110,28 @@ I cannot help you if you do not have enough hardware.
 
 `Step 4.` Install on a hardware computer or in a Virtual Machine (VM) a Linux OS that is better supported by kdesrc-build.
 
-The list is: rolling-release Linux distributions (Arch, openSUSE Tumbleweed, KDE neon) or the latest version of Fedora KDE Spin or Kubuntu.
+The list is: rolling-release Linux distributions (Arch, openSUSE Tumbleweed, KDE neon) or the latest version of Fedora KDE Spin.
 I have more than 12 youtube screen recordings for this. E.g. "openSUSE Tumbleweed VM and kdesrc-build tutorial".
 
-If you have the Windows OS installed on your hardware computer, I would upgrade to Windows Pro from Windows Home. And I would install the Linux OS in a Hyper-V VM. See my youtube video "Windows 10 enable Hyper-V install Linux VM tutorial".
+If you have the Windows OS installed on your hardware computer, I would upgrade to Windows Pro from Windows Home. And I would install the Linux OS in a Hyper-V VM. E.g. https://www.youtube.com/@nmariusp/search?query=windows , the newer screen recordings will be more up to date.
 
 `Step 5.` Set up kdesrc-build.
 
-KDE has more than 400 git repositories. In order to build the KDE git repositories correctly and in the correct order, we use the build framework https://invent.kde.org/sdk/kdesrc-build
+KDE has more than 400 git repositories. In order to build the KDE git repositories correctly and in the correct order, we use the build framework kdesrc-build.
 
-The procedure "Set up kdesrc-build" is https://community.kde.org/Get_Involved/development
-I have more than 21 youtube screen recordings for this. E.g. "Debian testing VM and build KDE software using kdesrc-build tutorial".
+The procedure "How to install kdesrc-build" is https://community.kde.org/Get_Involved/development
+I have more than 20 youtube screen recordings for this. E.g. https://www.youtube.com/@nmariusp/search?query=kdesrc-build , the newer screen recordings will be more up to date.
 
 `Step 6.` Learn the Integrated Development Environment Qt Creator.
+
+Learn how to use the Integrated Development Environment (IDE) [Qt Creator](https://community.kde.org/Get_Involved/development/IDE_configuration/Qt_Creator) as well as possible and use it for at least two weeks. After that, if you want, you can switch to another IDE or C++ text editor.
 
 And after that, optionally, you can learn how to use other IDEs and text editors.
 I have more than 21 youtube screen recordings for this. E.g. "How to install Qt Creator from the Qt Framework website".
 
 `Step 7.` Choose what to do.
 
-https://community.kde.org/Get_Involved/development#Choose_what_to_do
+https://community.kde.org/Get_Involved/development#Choose_what_to_work_on
 https://community.kde.org/Get_Involved/development/Easy
 I have more than 16 youtube screen recordings for this. E.g. "Easy KDE contribution fix clang, clazy, cppcheck issues inside Qt Creator", "What to do after a module builds with kdesrc-build".
 
@@ -126,31 +140,13 @@ I have more than 16 youtube screen recordings for this. E.g. "Easy KDE contribut
 https://community.kde.org/Infrastructure/GitLab#Submitting_a_merge_request
 I have more than 3 youtube screen recordings for this. E.g. "What to do after a module builds with kdesrc-build".
 
-<a name="online-accounts"></a>
-# Parallel track one: Online accounts
-
-<a name="build"></a>
-# Parallel track two: Be able to build all 400 KDE git repositories
-
-[How to install and use kdesrc-build. nmariusp's kdesrc-build procedure](kdesrc-build.html)
-
-<a name="learn"></a>
-# Parallel track three: Learn Linux, C++, Qt, KDE source code
-
-<a name="ide"></a>
-# Integrated Development Environment, tools, git
-
-Learn how to use the Integrated Development Environment (IDE) [Qt Creator](https://community.kde.org/Get_Involved/development/IDE_configuration/Qt_Creator) as well as possible and use it for at least two weeks. After that, if you want, you can switch to another IDE or C++ text editor.
-
-<a name="write-to-git-repo"></a>
-# Write to the git repositories from the KDE Community
-
-<a name="fast-merge-request"></a>
-# Ideas for Merge Requests that can be done in under half an hour
-
-[Here.](fast-merge-request.html)
-
 <a name="advanced-topics"></a>
 # Advanced topics
 
 The IDE [JetBrains CLion](clion.html).
+
+Learn the rest of the pyramid of things that people who program for KDE will learn: Linux, UNIX, command line, git, gitk, git gui, GitLab, the English language, the C programming language, C++, virtual machines (QEMU, virt-manager, Oracle VirtualBox, Microsoft Windows Hyper-V), Linux containers (docker, distrobox, podman, lxc, lxd), app technologies (Ubuntu snap, flatpak, AppImage, AppStream, xdg, REUSE), Qt framework, wayland, X11 etc.
+
+[How to install and use kdesrc-build. nmariusp's kdesrc-build procedure](kdesrc-build.html)
+
+[Ideas for Merge Requests that can be done in under half an hour](https://community.kde.org/Get_Involved/development/Easy)
