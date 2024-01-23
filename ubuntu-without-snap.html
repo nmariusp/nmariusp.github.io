@@ -1,0 +1,122 @@
+<script src="md-page.js"></script><noscript>
+
+# Ubuntu how to uninstall snap completely
+
+Screen recording
+
+This Linux OS is Kubuntu 23.10.
+
+    $ command line to be run as a Linux user that can use sudo and that is not "root"
+    # command line to be run as the Linux user root
+
+In order to become the user root:
+
+    $ sudo su
+
+In order stop being the user root and return to being the other Linux user
+
+    # exit
+
+Unpin the Mozilla Firefox icon from the KDE Plasma panel, i.e. "Icons-only Task Manager".
+
+    $ apt-cache rdepends snapd
+    ...
+    firefox
+    chromium-browser
+
+The only deb packages in Ubuntu that just install the equivalent snap package are the two above.
+Instead of <code>chromium-browser</code> you can install the official Google Chrome.
+Instead of <code>firefox</code> you can install the official Mozilla Firefox from mozilla.org or
+you can use the Ubuntu PPA "mozillateam". I'll use the Ubuntu PPA "mozillateam".
+
+In order to not be without a web browser as we uninstall Mozilla Firefox snap.
+
+    $ sudo apt install falkon
+
+Start the falkon web browser. Search google:
+ubuntu remove snap
+
+https://www.debugpoint.com/remove-snap-ubuntu/
+
+    $ snap list
+    Name               Version          Rev    Tracking         Publisher   Notes
+    bare               1.0              5      latest/stable    canonical✓  base
+    core22             20230801         864    latest/stable    canonical✓  base
+    firefox            118.0.1-1        3216   latest/stable/…  mozilla✓    -
+    gnome-42-2204      0+git.ff35a85    141    latest/stable/…  canonical✓  -
+    gtk-common-themes  0.1-81-g442e511  1535   latest/stable/…  canonical✓  -
+    snapd              2.60.3           20092  latest/stable    canonical✓  snapd
+
+    $ snap list | awk '{print $1}' | tail -n +2
+    bare
+    core22
+    firefox
+    gnome-42-2204
+    gtk-common-themes
+    snapd
+
+    $ sudo su
+
+    # snap list | awk '{print $1}' | tail -n +2 | xargs snap remove --purge
+    error: unsupported option provided for multi-snap operation
+Does not work.
+
+    # for package_name in `snap list | awk '{print $1}' | tail -n +2 | shuf` ; do echo $package_name; done
+    gnome-42-2204
+    core22
+    firefox
+    snapd
+    bare
+    gtk-common-themes
+
+Run ten times the command below:
+
+    # for package_name in `snap list | awk '{print $1}' | tail -n +2 | shuf` ; do echo Removing $package_name; snap remove --purge $package_name ; done
+
+Make sure:
+
+    # snap list
+    No snaps are installed yet. Try 'snap install hello-world'.
+
+    # apt remove --autoremove snapd
+
+    # mkdir -p /etc/apt/preferences.d
+    # cat /etc/apt/preferences.d/nosnap.pref
+    cat: /etc/apt/preferences.d/nosnap.pref: No such file or directory
+
+    # echo Package: snapd firefox* > /etc/apt/preferences.d/nosnap.pref
+    # echo Pin: release o=Ubuntu* >> /etc/apt/preferences.d/nosnap.pref
+    # echo Pin-Priority: -1 >> /etc/apt/preferences.d/nosnap.pref
+
+    # cat /etc/apt/preferences.d/nosnap.pref
+    Package: snapd firefox*
+    Pin: release o=Ubuntu*
+    Pin-Priority: -1
+
+    # apt update
+
+    # apt install snapd
+    Reading package lists... Done
+    Building dependency tree... Done
+    Reading state information... Done
+    Package snapd is not available, but is referred to by another package.
+    This may mean that the package is missing, has been obsoleted, or
+    is only available from another source
+
+    E: Package 'snapd' has no installation candidate
+
+    # apt install firefox
+    ...
+    E: Package 'firefox' has no installation candidate
+
+    # add-apt-repository ppa:mozillateam/ppa
+
+    # apt update
+
+    # apt install firefox
+    The following NEW packages will be installed:
+    firefox xul-ext-ubufox
+
+Start firefox. Pin to KDE Plasma panel, i.e. "Icons-only Task Manager".
+
+Done. Reboot.
