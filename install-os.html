@@ -6,7 +6,9 @@
 OS = operating system.
 VM = virtual machine.
 
-# Fedora KDE Spin >= 38
+# Linux
+
+## Fedora KDE Spin >= 38
 
 Screen recording https://www.youtube.com/watch?v=Doj8VpTLShs
 
@@ -17,13 +19,13 @@ Screen recording https://www.youtube.com/watch?v=Doj8VpTLShs
 * Survival in the Graphical User Interface (GUI). Install xrdp server https://nmariusp.github.io/rdp.html . Connect to the VM using RDP `xfreerdp /u:administrator /w:1920 /h:1080 /v:192.168.122.168 /video /rfx /network:lan /gfx /dynamic-resolution /sound:sys:pulse`
 <pre>sudo dnf remove kwrite ; sudo dnf install kate git-gui gitk krusader</pre>
 
-# Kubuntu >= 23.04
+## Kubuntu >= 23.04
 
-# KDE neon
+## KDE neon
 
-# EndeavourOS with KDE Plasma installed from the OS installer, Arch Linux installed using archinstall with the option "desktop, kde" from the OS installer
+## EndeavourOS with KDE Plasma installed from the OS installer, Arch Linux installed using archinstall with the option "desktop, kde" from the OS installer
 
-# openSUSE Tumbleweed
+## openSUSE Tumbleweed
 
 Screen recording https://www.youtube.com/watch?v=tlMefsBArO4
 
@@ -55,7 +57,9 @@ zypper install git-gui gitk krusader
 * In the start menu, right click on some applications > Uninstall or Manage Add-Ons... and uninstall them. E.g. KMail, Kontact, KOrganizer, KTnef, maybe libre office etc.
 </pre>
 
-# FreeBSD >= 13.2
+# BSD
+
+## FreeBSD >= 13.2
 
 Screen recording https://www.youtube.com/watch?v=8MqBnb3Y9JU
 
@@ -107,7 +111,81 @@ PATH=/sbin:/bin:/usr/sbin:/usr/bin:/usr/local/sbin:/usr/local/bin:$HOME/bin; exp
 # Restart the computer.
 </pre>
 
-### Alpine Linux
+## OpenBSD >= 7.4
+
+Install e.g. https://ftp.openbsd.org/pub/OpenBSD/7.4/amd64/install74.iso . Read https://ftp.openbsd.org/pub/OpenBSD/7.4/amd64/INSTALL.amd64 .
+Connect via SSH.
+
+<pre>
+# Enable doas
+su -
+cp /etc/examples/doas.conf /etc/doas.conf
+exit
+
+# Surviving at the command line:
+doas su
+# An editor like emacs named mg is preinstalled.
+pkg_add -v bash git mc emacs--no_x11
+# ksh is the default sh.
+chsh -s /usr/local/bin/bash
+# As user administrator
+chsh -s /usr/local/bin/bash
+
+# Surviving in GUI:
+
+# https://rsadowski.de/posts/2024-01-09-openbsd-kde/
+# KDE Plasma 5 will be available in OpenBSD 7.5.
+# In OpenBSD 7.4 you need to enable current.
+# https://www.openbsd.org/faq/current.html
+doas sysupgrade -s
+# The computer will reboot automatically.
+echo export PKG_PATH=https://cdn.openbsd.org/pub/OpenBSD/snapshots/packages/amd64 > ~/.bashrc
+echo alias sudo='doas' >> ~/.bashrc
+doas su
+echo export PKG_PATH=https://cdn.openbsd.org/pub/OpenBSD/snapshots/packages/amd64 > ~/.bashrc
+exit
+
+doas su
+pkg_add -u
+pkg_add kde-plasma
+# As per https://openports.pl/path/meta/kde,-plasma
+
+doas pkg_add tigervnc
+vncserver -fg
+# Will create the file /home/administrator/.vnc/xstartup
+# On the VNC client computer, run: vncviewer 192.168.122.180:1
+
+mv ~/.vnc/xstartup ~/.vnc/xstartup~orig
+
+mg ~/.vnc/xstartup
+# Paste:
+export XDG_RUNTIME_DIR=/tmp/run/$(id -u)
+if [ ! -d $XDG_RUNTIME_DIR ]; then
+    mkdir -m 700 -p $XDG_RUNTIME_DIR
+fi
+
+export QT_FORCE_STDERR_LOGGING=1
+export XDG_CURRENT_DESKTOP=KDE
+export DESKTOP_SESSION=plasma
+export QT_FORCE_STDERR_LOGGING=1
+/usr/local/bin/startplasma-x11 > ~/.startplasma-x11.log 2>&1
+
+chmod u+x ~/.vnc/xstartup
+
+vncserver -fg
+
+# vncviewer 192.168.122.180:1
+# In the VNC client windo, resize the window as needed.
+# This will tell KDE Plasma desktop in OpenBSD to change screen resolution.
+# Copy/paste of text works across VNC.
+
+# In KDE Plasma 5 > start menu > search for konsole > right click on konsole > Add to Favorites
+pkg_add kate 
+</pre>
+
+# Other
+
+## Alpine Linux
 
 Screen recording https://www.youtube.com/watch?v=d9WXHMfBDT0
 
