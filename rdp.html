@@ -37,10 +37,10 @@ sudo apt install xrdp xorgxrdp
 Screen recording https://www.youtube.com/watch?v=Doj8VpTLShs
 
 <pre>
+sudo dnf install plasma-workspace-x11 # Needed on Fedora KDE 40.
 sudo dnf install xrdp xorgxrdp
-sudo systemctl enable --now xrdp
 # Edit file /etc/xrdp/xrdp.ini, uncomment the entire section "[Xorg]".
-sudo reboot
+sudo systemctl enable --now xrdp
 </pre>
 
 ## EndeavourOS with KDE Plasma installed from the OS installer, Arch Linux installed using archinstall with the option "desktop, kde" from the OS installer
