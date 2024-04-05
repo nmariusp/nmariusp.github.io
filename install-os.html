@@ -14,7 +14,7 @@ Screen recording https://www.youtube.com/watch?v=Doj8VpTLShs
 
 * As usual: download the ISO file, using Virtual Machine Manager create a VM named fedora, 10240 GB RAM, 300 GB SSD, use virt, use maximum possible vcpus minus two (the hardware computer has a CPU with 16 threads, so the VM uses 14 vcpus). Start the VM.
 * In the Fedora installer select custom partitioning, use EXT4 instead of btrfs, do not use a separate /home partition. Create a user named administrator.
-* Log into KDE Plasma > System Settings > Energy Saving > uncheck "Suspend session Automatically Sleep after 15 min".
+* Log into KDE Plasma 5 > System Settings > Energy Saving > uncheck "Suspend session Automatically Sleep after 15 min". In KDE Plasma 6 > System Settings > Security & Privacy > Screen Locking > uncheck the checkbox "Lock screeen automatically After".
 * Survival at the command line. sudo is available, SSH server is already installed but needs to be enabled. `systemctl enable --now sshd`. From now on, I do not need the "Graphical Console" of Virtual Machine Manager. KDE Plasma > Log Out. Connect to the VM using ssh `ssh administrator@192.168.122.106`. Advantages: copy/paste of text works, we can resize the terminal that runs SSH as we want, we can continue to use the web browser of the hardware/host computer. `sudo dnf install git emacs-nox mc`.
 * Survival in the Graphical User Interface (GUI). Install xrdp server https://nmariusp.github.io/rdp.html . Connect to the VM using RDP `xfreerdp /u:administrator /w:1920 /h:1080 /v:192.168.122.168 /video /rfx /network:lan /gfx /dynamic-resolution /sound:sys:pulse`
 <pre>sudo dnf remove kwrite ; sudo dnf install kate git-gui gitk krusader</pre>
