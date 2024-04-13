@@ -121,6 +121,9 @@ Connect via SSH.
 su -
 cp /etc/examples/doas.conf /etc/doas.conf
 exit
+# If you have sotware that needs sudo. Run the two lines below:
+#mkdir -p ~/.local/bin ; ln -s /usr/bin/doas ~/.local/bin/sudo
+#echo "export PATH=~/.local/bin:\$PATH" >> ~/.bashrc
 
 # Surviving at the command line:
 doas su

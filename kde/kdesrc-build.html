@@ -160,6 +160,18 @@ cd ~/kde5/src/kdesrc-build
 ./kdesrc-build frameworks --ignore-modules=kstatusnotifieritem
 </pre>
 
+# More
+
+## OpenBSD >= 7.5
+
+Edit the kdesrc-buildrc file e.g.:
+<pre>cmake-options -DCMAKE_BUILD_TYPE=RelWithDebInfo -DKF_IGNORE_PLATFORM_CHECK=ON</pre>
+
+Also set environment variable:
+<pre>export CMAKE_PREFIX_PATH=/usr/local/lib/qt5/cmake</pre>
+
+
+
 # Ignore everything below
 
 <pre>
