@@ -238,6 +238,8 @@ x11vnc
 # Complains about missing password
 x11vnc -storepasswd
 
+echo "exec mate-session" > ~/.xinitrc
+
 FD_GEOM=1920x1080 FD_SESS=mate x11vnc -rfbauth ~/.vnc/passwd -display :1 -xkb -create
 
 # On vnc viewer machine.
