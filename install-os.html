@@ -21,7 +21,7 @@ Screen recording https://www.youtube.com/watch?v=Doj8VpTLShs
 
 ## Kubuntu >= 24.04
 
-In the installer, you can select a minimal installation. This will not install any web browser. Install Mozilla Firefox from the official Mozilla DEB repository https://support.mozilla.org/en-US/kb/install-firefox-linux#w_install-firefox-deb-package-for-debian-based-distributions
+In the installer, you can select a minimal installation. This will not install any web browser. Install Mozilla Firefox Beta from the official Mozilla DEB repository https://support.mozilla.org/en-US/kb/install-firefox-linux#w_install-firefox-deb-package-for-debian-based-distributions
 
 ## KDE neon
 
@@ -59,9 +59,44 @@ zypper install git-gui gitk krusader
 * In the start menu, right click on some applications > Uninstall or Manage Add-Ons... and uninstall them. E.g. KMail, Kontact, KOrganizer, KTnef, maybe libre office etc.
 </pre>
 
+## Alpine Linux
+
+Screen recording https://www.youtube.com/watch?v=d9WXHMfBDT0
+
+I installed Alpine Linux 3.18 using alpine-standard-3.18.2-x86_64.iso. As per https://docs.alpinelinux.org/user-handbook/0.1a/index.html , using full setup-alpine, use default mirror, add "community" repository.
+In the installer, I created a user named "administrator" and the user can use "doas".
+
+I connect to the VM in text user interface mode using ssh:
+
+<pre>
+ssh administrator@192.68.122.6
+
+doas su
+
+# Surviving at the command line: bash, emacs-nox, mc, git.
+apk update
+apk upgrade
+apk add emacs-nox mc git bash
+#chsh -s /bin/bash
+
+# Surviving in GUI:
+setup-xorg-base
+# I do not install alpine-desktop, I install KDE Plasma desktop as per https://wiki.alpinelinux.org/wiki/KDE
+
+apk add plasma elogind polkit-elogind
+rc-update add dbus
+rc-update add elogind
+rc-update add polkit
+setup-devd udev
+rc-update add sddm
+rc-service sddm start
+
+reboot
+</pre>
+
 # BSD
 
-## FreeBSD >= 13.2
+## FreeBSD >= 14.0
 
 Screen recording https://www.youtube.com/watch?v=8MqBnb3Y9JU
 
@@ -183,41 +218,30 @@ pkg_add kate
 # Kirigami System Settings modules (KCMs) do not use the Breeze theme.
 </pre>
 
-# Other
+## Other
 
-## Alpine Linux
+## OpenIndiana >= 2024.04
 
-Screen recording https://www.youtube.com/watch?v=d9WXHMfBDT0
-
-I installed Alpine Linux 3.18 using alpine-standard-3.18.2-x86_64.iso. As per https://docs.alpinelinux.org/user-handbook/0.1a/index.html , using full setup-alpine, use default mirror, add "community" repository.
-In the installer, I created a user named "administrator" and the user can use "doas".
-
-I connect to the VM in text user interface mode using ssh:
+Use e.g. OpenIndiana Hipster 2024.04 Live DVD (64-bit x86). In the installer, use whole disc, create a user named "admin". Connect via SSH.
 
 <pre>
-ssh administrator@192.68.122.6
+ssh admin@192.168.122.197
+# Become the user root.
+sudo su
+pkg update
+pkg install x11vnc xvfb
 
-doas su
+# Become the user admin.
+exit
 
-# Surviving at the command line: bash, emacs-nox, mc, git.
-apk update
-apk upgrade
-apk add emacs-nox mc git bash
-#chsh -s /bin/bash
+x11vnc
+# Complains about missing password
+x11vnc -storepasswd
 
-# Surviving in GUI:
-setup-xorg-base
-# I do not install alpine-desktop, I install KDE Plasma desktop as per https://wiki.alpinelinux.org/wiki/KDE
+FD_GEOM=1920x1080 FD_SESS=mate x11vnc -rfbauth ~/.vnc/passwd -display :1 -xkb -create
 
-apk add plasma elogind polkit-elogind
-rc-update add dbus
-rc-update add elogind
-rc-update add polkit
-setup-devd udev
-rc-update add sddm
-rc-service sddm start
-
-reboot
+# On vnc viewer machine.
+vncviewer 192.168.122.197
 </pre>
 
 # Terraforming KDE Plasma - nmariusp's preferences
