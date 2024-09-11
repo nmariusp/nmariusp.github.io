@@ -87,6 +87,11 @@ sudo zypper install xrdp xorgxrdp
 sudo systemctl enable --now xrdp
 </pre>
 
+If the KDE Plasma X11 session is not started automatically, create the file ~/.xinitrc with the content:
+<pre>
+startplasma-x11
+</pre>
+
 ## FreeBSD >= 13.2
 
 Screen recording https://www.youtube.com/watch?v=8MqBnb3Y9JU
@@ -210,6 +215,8 @@ Use a command line like:
 xfreerdp /u:administrator /w:1920 /h:1080 /v:192.168.122.168 /video /rfx /network:lan /gfx /dynamic-resolution /sound:sys:pulse
 </pre>
 
+Make sure that in the "Session" combo box "Xorg" is selected. Not something else such as "Xvnc".
+
 You can resize the window and the resolution of the RDP server will change correctly.
 
 Other interesting command line parameters:
@@ -226,7 +233,7 @@ Or install another RDP client e.g. "Sysinternals Remote Desktop Connection Manag
 
 I prefer to use the app "Sysinternals Remote Desktop Connection Manager" because I need the RDP client to have a window titlebar and window border, I can hide the menu, and after I resize the window, if I select to reconnect, the RDP server's resolution will be changed correctly.
 
-# Operating systems that do not have a RDP server such as xrdp
+# Operating systems that do not have an RDP server such as xrdp
 
-OpenBSD and NetBSD do not run the xrdp RDP server yet. I install the VNC server tightvnc.
+OpenBSD and NetBSD do not run the xrdp RDP server yet. I install the VNC server tigervnc.
 Screen recording https://www.youtube.com/watch?v=xqjCF4mVdg0 , https://www.youtube.com/watch?v=eG2KcljSHRA
