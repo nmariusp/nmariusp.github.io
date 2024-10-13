@@ -262,4 +262,6 @@ Firefox Settings > search for "down" > check the check box "Always ask you where
 * Firefox private window. In Firefox, you should never be logged in to Google when doing Goolge searches. You should never be logged in to YouTube when doing YouTube searches. The only way to accomplish this is to use Firefox private window for 95% of your web browsing. Only use a Firefox non private window for gmail, Google Drive, Google Docs, outlook.office.com, i.e. when you write to websites (e.g. YouTube upload videos) or when the website forces you to use an online account (e.g. banking websites).
 * Kate. In Kate main menu > Settings > Configure Kate > search for "welc" > uncheck the check box "Show welcome view for new windows". Press the "OK" button.
 
-# Windows 11 without Secure Boot
+# Windows 11
+
+When creating a Windows virtual machine (VM) in virt-manager, add a second DVD drive with the largest virtio-win ISO file from https://fedorapeople.org/groups/virt/virtio-win/direct-downloads/latest-virtio/ . Change VM settings: SSD of type virtio, NIC of type virtio. After the VM boots, the Windows installer starts, will not find the SSD, load disk driver from DVD drive. It will not find a network connection, Shift+F10, a cmd.exe starts, write: OOBE\BYPASSNRO. Press Enter.
