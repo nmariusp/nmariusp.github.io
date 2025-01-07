@@ -1,0 +1,118 @@
+<script src="md-page.js"></script><noscript>
+
+# How to install a VNC server and client
+
+# How to install a VNC server
+
+Screen recordings https://www.youtube.com/@nmariusp/search?query=vnc
+
+# Glossary
+VNC is Virtual Network Computing. https://en.wikipedia.org/wiki/VNC
+
+RFB is the remote framebuffer protocol. https://en.wikipedia.org/wiki/RFB_(protocol)
+
+OS means operating system.
+
+# VNC features
+
+I use the TigerVNC VNC server and VNC client.
+
+* Resizing the window of the TigerVNC VNC client changes the resolution of the VNC server.
+* Copy/paste of text works OK.
+* The speed is OK. Everything is snappy, even using an Integrated Development Environment (IDE).
+
+# Linux, FreeBSD, OpenBSD, NetBSD VNC server tigervnc
+
+If you cannot make your X server work correctly, e.g. small resolution. An alternative is to install a VNC server and to connect to this computer from another computer using a VNC client.
+
+Note: on the VNC server, you should log out if you use X11 and you are connected via the computer's keyboard and mouse (aka Ctrl+Alt+F1, aka one of the 8 virtual consoles). Before connecting using a VNC client.
+
+## Ubuntu >= 24.04
+
+Screen recording https://www.youtube.com/watch?v=0ICSWkuKlG4
+
+On the computer where we install the VNC server:
+<pre>
+sudo apt install openssh-server
+</pre>
+
+On the computer where we install the VNC client:
+<pre>
+sudo apt install tigervnc-viewer
+
+ssh administrator@192.168.122.117
+
+sudo apt install tigervnc-standalone-server
+vncpasswd
+# Enter a longer than 6 characters password.
+# Do not provide a "view-only password".
+
+sudo apt install gnome-session-flashback
+
+cat << 'EOF' > ~/.vnc/xstartup
+#!/bin/sh
+
+unset SESSION_MANAGER
+unset DBUS_SESSION_BUS_ADDRESS
+
+[ -x /etc/vnc/xstartup ] && exec /etc/vnc/xstartup
+[ -r $HOME/.Xresources ] && xrdb $HOME/.Xresources
+
+export XKL_XMODMAP_DISABLE=1
+export XDG_CURRENT_DESKTOP="GNOME-Flashback:Unity"
+export XDG_MENU_PREFIX="gnome-flashback-"
+
+gnome-session --session=gnome-flashback-metacity --disable-acceleration-check
+
+EOF
+</pre>
+
+## Kubuntu >= 24.04
+## Fedora >= 41, Arch Linux, openSUSE Tumbleweed, Alpine Linux, FreeBSD >= 14.2
+
+## OpenBSD >= 7.5 with KDE Plasma desktop
+
+See https://www.youtube.com/watch?v=fSXWlE0w-ow , https://www.youtube.com/watch?v=D5ohFBMzz1M
+
+## NetBSD >= 10.0
+
+See https://www.youtube.com/watch?v=rp7XouTq1hQ
+
+## Oracle Solaris
+
+See https://www.youtube.com/watch?v=i2BVx3Q6cZY
+
+## OpenIndiana >= 2024.04, OmniOS
+See https://www.youtube.com/watch?v=YSczO6lBiAk https://www.youtube.com/watch?v=iBck-Vb_hms
+
+## Linux containers, Docker, Podman, lxc, lxd/incus, openvz
+
+
+# Linux, *BSD etc. VNC client
+
+Install from your OS the binary package for tigervnc client.
+
+Run:
+<pre>
+vncviewer --help
+</pre>
+
+Note down any of the command line parameters that you might need.
+
+Use a command line like:
+<pre>
+vncviewer -via administrator@192.168.122.117 localhost::5901
+</pre>
+
+You can resize the window and the resolution of the RDP server will change correctly.
+
+# Windows VNC server
+
+Windows >= 10, Windows Server >= 2022
+
+# Windows VNC client
+
+
+# Other operating systems
+
+macOS has a builtin non standard VNC server. https://help.ubuntu.com/community/AppleRemoteDesktop
