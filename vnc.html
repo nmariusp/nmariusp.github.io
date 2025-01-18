@@ -65,10 +65,39 @@ export XDG_MENU_PREFIX="gnome-flashback-"
 gnome-session --session=gnome-flashback-metacity --disable-acceleration-check
 
 EOF
+
+vncserver :1
 </pre>
 
 ## Kubuntu >= 24.04
-## Fedora >= 41, Arch Linux, openSUSE Tumbleweed, Alpine Linux, FreeBSD >= 14.2
+
+## EndeavourOS with KDE Plasma installed from the OS installer, Arch Linux installed using archinstall, from archinstall select the KDE Plasma 6 desktop
+
+Screen recording https://www.youtube.com/watch?v=pJPOXamoumU
+
+On the computer where we install the VNC server:
+<pre>
+sudo systemctl enable --now sshd
+</pre>
+
+On the computer where we install the VNC client:
+<pre>
+# Install the tigervnc VNC client package. E.g.
+sudo pacman -Syu
+sudo pacman -S tigervnc
+
+ssh administrator@192.168.122.117
+
+sudo pacman -Syu
+sudo pacman -S tigervnc
+vncpasswd
+# Enter a longer than 6 characters password.
+# Do not provide a "view-only password".
+
+vncserver :1
+</pre>
+
+## Fedora >= 41, openSUSE Tumbleweed, Alpine Linux, FreeBSD >= 14.2
 
 ## OpenBSD >= 7.5 with KDE Plasma desktop
 
