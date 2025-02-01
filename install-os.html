@@ -148,9 +148,10 @@ PATH=/sbin:/bin:/usr/sbin:/usr/bin:/usr/local/sbin:/usr/local/bin:$HOME/bin; exp
 # Restart the computer.
 </pre>
 
-## OpenBSD >= 7.5
+## OpenBSD
+For OpenBSD >= 7.6.
 
-Install e.g. https://ftp.openbsd.org/pub/OpenBSD/7.5/amd64/install75.iso . Read https://ftp.openbsd.org/pub/OpenBSD/7.5/amd64/INSTALL.amd64 . Create user named administrator.
+Install e.g. https://ftp.openbsd.org/pub/OpenBSD/7.6/amd64/install75.iso . Read https://ftp.openbsd.org/pub/OpenBSD/7.6/amd64/INSTALL.amd64 . Create user named administrator.
 Connect via SSH.
 
 <pre>
@@ -168,21 +169,26 @@ doas su
 pkg_add -v bash git mc emacs--no_x11
 # ksh is the default sh.
 chsh -s /usr/local/bin/bash
+exit
 # As user administrator
 chsh -s /usr/local/bin/bash
 
 # Surviving in GUI:
 
-# https://rsadowski.de/posts/2024-01-09-openbsd-kde/
+# https://rsadowski.de/posts/2024-05-20-kde6-on-openbsd
 doas su
 pkg_add kde-plasma
 # As per https://openports.pl/path/meta/kde,-plasma
 doas pkg_add tigervnc
-vncserver -fg
+vncpasswd
 # Asks for a VNC password that is at least 6 characters long.
 # Do not provide a view only password.
+vncserver -fg
 # Will create the file ~/.vnc/xstartup
-# On the VNC client computer, run: vncviewer 192.168.122.180:1
+# On the VNC client computer run: vncviewer 192.168.122.180:1
+# This will start the OpenBSD X11 session with fvwm.
+# To stop the VNC X11 session, press Ctrl+C in the
+# terminal where "vncserver -fg" is running.
 
 mv ~/.vnc/xstartup ~/.vnc/xstartup~orig
 
@@ -196,7 +202,6 @@ fi
 export QT_FORCE_STDERR_LOGGING=1
 export XDG_CURRENT_DESKTOP=KDE
 export DESKTOP_SESSION=plasma
-export QT_FORCE_STDERR_LOGGING=1
 /usr/local/bin/startplasma-x11 > ~/.startplasma-x11.log 2>&1
 
 # Ctrl+X+S to save, Ctrl+X+C to close.
@@ -208,14 +213,15 @@ vncserver -fg
 # On the VNC client computer, run: vncviewer 192.168.122.180:1
 # In the VNC client window, resize the window as needed.
 # This will tell KDE Plasma desktop in OpenBSD to change screen resolution.
-# Copy/paste of text works across VNC.
+# Bi directional copy/paste of text works correctly between the VNC client and the VNC server.
 
-# In KDE Plasma 5 > start menu > search for konsole > right click on konsole > Add to Favorites
+# In KDE Plasma > start menu > search for konsole > right click on konsole > Add to Favorites
 pkg_add kate
-# In the KDE Plasma main panel, unpin from taskbar the icon for Plasma Discover (which is the KDE app store app).
+# In the KDE Plasma main panel, unpin from taskbar the icon for Plasma Discover
+# (which is the KDE app store app).
 # "The screen locker is broken and unlocking is not possible" ConsoleKit or LoginD is needed.
-# In the KDE System Settings, disable screen locking for now.
-# Kirigami System Settings modules (KCMs) do not use the Breeze theme.
+# In the KDE System Settings, disable screen locking for now. System Settings app > Security & Privacy >
+# Screen Locking, from the combo box "Lock screen automatically:" select "Never".
 </pre>
 
 ## Other
