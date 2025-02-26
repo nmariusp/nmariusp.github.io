@@ -87,6 +87,10 @@ sudo zypper install xrdp xorgxrdp
 sudo systemctl enable --now xrdp
 </pre>
 
+Edit the file <code>/etc/xrdp/xrdp.ini</code> and comment out all the lines starting with the line <code>[Xvnc]</code> and ending with the line before the line <code>[Xorg]</code>. Note: the line <code>[Xorg]</code> should not be commented out.
+
+This makes it such that when you connect using an RDP client app, the "Session" combobox has the correct item "Xorg" selected by default.
+
 If the KDE Plasma X11 session is not started automatically, create the file ~/.xinitrc with the content:
 <pre>
 startplasma-x11
