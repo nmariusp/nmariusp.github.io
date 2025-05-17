@@ -111,6 +111,47 @@ See https://www.youtube.com/watch?v=rp7XouTq1hQ
 
 See https://www.youtube.com/watch?v=i2BVx3Q6cZY
 
+In one Konsole tab:
+<pre>
+# openssh server is preinstalled and already running.
+# tigervnc is preinstalled.
+# I can only install Solaris on virtualbox.
+# Not on virt-manager/QEMU.
+# In virtualbox create port forwarding rule:
+# VM Settings > "Network" tab > "Adapter 1" tab > expand "Advanced" > "Port Forwarding" button.
+# Add line:
+# Name: "SSH", Protocol: "TCP", Host IP: 127.0.0.1, Host Port: "2222", Guest IP: "10.0.2.15", Guest Port: "22".
+
+ssh -p 2222 administrator@127.0.0.1
+
+vncpasswd
+# Enter a longer than 6 characters password.
+# Do not provide a "view-only password".
+
+exit
+</pre>
+
+Reconnect via SSH.
+<pre>
+ssh -p 2222 -L 5901:localhost:5901 administrator@127.0.0.1
+vncserver :1 -fg
+# Wait 15 seconds for the GNOME desktop to finish starting.
+</pre>
+
+In another Konsole tab:
+<pre>
+vncviewer 127.0.0.1:1
+</pre>
+
+Or you can do everything in just one line, in just one GUI terminal:
+<pre>
+ssh -p 2222 administrator@127.0.0.1 -f -L 5901:localhost:5901 "vncserver :1 -fg ; sleep 20" && vncviewer 127.0.0.1:1
+# Wait 15 seconds for the GNOME desktop to finish starting.
+# vncviewer will ask if you want to reconnect.
+# Once the GNOME desktop finishes starting, press the button
+# in the vncviewer dialog to reconnect.
+</pre>
+
 ## OpenIndiana >= 2024.04, OmniOS
 See https://www.youtube.com/watch?v=YSczO6lBiAk https://www.youtube.com/watch?v=iBck-Vb_hms
 
