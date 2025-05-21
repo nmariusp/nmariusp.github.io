@@ -97,7 +97,43 @@ vncpasswd
 vncserver :1
 </pre>
 
-## Fedora >= 41, openSUSE Tumbleweed, Alpine Linux, FreeBSD >= 14.2
+## Fedora >= 42
+
+On the computer where we install the VNC server:
+<pre>
+sudo systemctl enable --now sshd
+# Make sure that no user is using the graphical user interface session (X server).
+</pre>
+
+On the computer where we install the VNC client:
+<pre>
+# Install the tigervnc VNC client package. E.g.
+sudo dnf install tigervnc
+
+ssh administrator@192.168.122.117
+
+sudo dnf install tigervnc-server
+vncpasswd
+# Enter a longer than 6 characters password.
+# Do not provide a "view-only password".
+
+vncserver -fg :1
+# If you press Ctrl+C, the VNC server will stop.
+</pre>
+
+In another terminal:
+<pre>
+vncviewer 192.168.122.117:1
+</pre>
+
+Alternatively, you can use a single command line on the VNC client computer.
+This will use an SSH tunnel, only requires access to TCP port 22 on the VNC server and starts the VNC server.
+
+<pre>
+ssh administrator@192.168.122.117 -f -L 5901:localhost:5901 "vncserver :1 -fg ; sleep 20" && vncviewer 127.0.0.1:1
+</pre>
+
+## openSUSE Tumbleweed, Alpine Linux, FreeBSD >= 14.2
 
 ## OpenBSD >= 7.5 with KDE Plasma desktop
 
