@@ -96,63 +96,19 @@ If the KDE Plasma X11 session is not started automatically, create the file ~/.x
 startplasma-x11
 </pre>
 
-## FreeBSD >= 13.2
+## FreeBSD >= 14.3
 
 Screen recording https://www.youtube.com/watch?v=8MqBnb3Y9JU
 
-I installed FreeBSD 13.2 using FreeBSD-13.2-RELEASE-amd64-disc1.iso.
-In the installer, I created a user named "administrator" and added this user to the user group "wheel".
-
-I connect to the VM in text user interface mode using ssh:
+I installed FreeBSD 14.3, see the FreeBSD chapter from [rdp.html](rdp.html) .
 
 <pre>
-ssh administrator@192.68.122.6
-
-su -
-
-# Surviving at the command line:
-pkg # Install the pkg command line app.
-pkg install bash emacs-nox mc git
-chsh -s /usr/local/bin/bash
-
-# Surviving in GUI:
-
-pkg install xorg
-pw groupmod video -m administrator
-pkg install noto-2.0 sudo
-EDITOR=emacs visudo
-# uncomment line:
-%wheel ALL=(ALL:ALL) ALL
-# We are inside emacs. Save the modified file: Ctrl+X S, Ctrl+X C.
-
-# In file /etc/fstab append line:
-emacs /etc/fstab
-proc /proc procfs rw 0 0
-# We are inside emacs. Save the modified file: Ctrl+X S, Ctrl+X C.
-
-mount -a
-
-pkg install kde5
-sysrc dbus_enable="YES"
-sysctl net.local.stream.recvspace=65536
-sysctl net.local.stream.sendspace=65536
-
-# I followed the instructions from https://download.freebsd.org/doc/en/books/handbook/handbook_en.pdf up to and including the chapter "7.2.1.4. Start KDE Plasma".
-
-# As user administrator:
-chsh -s /usr/local/bin/bash
-emacs ~/.profile
-# Uncomment the line:
-PATH=/sbin:/bin:/usr/sbin:/usr/bin:/usr/local/sbin:/usr/local/bin:$HOME/bin; export PATH
-# Save and exit the text editor.
-# Restart the computer.
-
 pkg install xrdp xorgxrdp
 sysrc xrdp_enable="YES"
 sysrc xrdp_sesman_enable="YES"
 
 # Create file ~/startwm.sh with content:
-exec ck-launch-session startplasma-x11
+exec dbus-launch --exit-with-x11 ck-launch-session startplasma-x11
 
 chmod +x ~/startwm.sh
 
