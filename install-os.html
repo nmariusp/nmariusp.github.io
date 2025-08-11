@@ -256,6 +256,26 @@ FD_GEOM=1920x1080 FD_SESS=mate x11vnc -rfbauth ~/.vnc/passwd -display :1 -xkb -c
 vncviewer 192.168.122.197
 </pre>
 
+## Windows XP x64 with Service Pack 2
+
+As per https://pve.proxmox.com/wiki/Windows_XP_Guest_Notes#Use_VirtIO_Drivers
+
+Windows XP has reached end of life (EOL) 2014.04.
+We use the ISO file "Windows XP Professional x64 Edition with Service Pack 2" from MSDN.
+We use the virtio drivers for Windows XP ISO file https://fedorapeople.org/groups/virt/virtio-win/deprecated-isos/archives/ . From before 2014.04: virtio-win-0.1-65 from 2013.11.
+
+Install Windows XP 64 bit OS VM: 4024 MB RAM, 4 vcpus, 100 GB HDD IDE (PATA). Finish installing the OS.
+Add hardware: IDE CDROM with virtio-win-0.1-65 ISO file, virtio HDD 20 GB (we will delete this later), virtio NIC. Boot, install missing Windows drivers for these virtio HDD, virtio NIC.
+Shutdown. Remove virtio HDD, remove IDE HDD make sure not to delete the qcow file, add new virtio HDD using the existing qcow file of the HDD where Windows XP is installed.
+
+You can connect using an RDP client. "/dynamic-resolution" does not work. So you need to provide the correct width and height via command line parameters.
+
+<pre>
+xfreerdp /u:administrator /w:1920 /h:1000 /v:192.168.122.109 /video /rfx /network:lan /gfx
+</pre>
+
+Install software: using the built in Internet Explorer navigate to http://ftp.mozilla.org/pub/firefox/releases/52.9.0esr/win32-sha1/en-US . And download and install the newest version of Mozilla Firefox that still supported Windows XP: version 52.9.0esr. Using Firefox, install 7zip, totalcmd and https://mypal-browser.org .
+
 # Terraforming KDE Plasma - nmariusp's preferences
 
 * Konsole. Hide toolbars: from the Konsole main menu > Settings > Toolbars Shown > uncheck all checkboxes.
