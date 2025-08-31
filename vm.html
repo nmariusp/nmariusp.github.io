@@ -1,0 +1,50 @@
+<script src="md-page.js"></script><noscript>
+
+# Which virtualization software to use for creating VMs?
+
+These are my preferences:
+* Windows: Microsoft hyperv is greater than (>) VirtualBox
+* Linux: virt-manager + QEMU + KVM > VirtualBox
+
+# On Linux, is virt-manager + QEMU + KVM better than VirtualBox?
+
+On Linux, virt-manager + QEMU + KVM is better than VirtualBox for me. Reasons:
+
+1. virt-manager + QEMU + KVM is the native Linux virtualization technology.
+2. virt-manager + QEMU + KVM is faster. Has support for virtio hardware.
+3. VirtualBox Linux kernel mdules are not part of the Linux project.
+<pre>
+Removing linux-headers-6.14.0-15-generic (6.14.0-15.15) ...
+Removing linux-headers-6.14.0-15 (6.14.0-15.15) ...
+Removing linux-image-6.14.0-15-generic (6.14.0-15.15) ...
+/etc/kernel/prerm.d/dkms:
+dkms: removing: virtualbox 7.0.20 (6.14.0-15-generic) (x86_64)
+Module virtualbox-7.0.20 for kernel 6.14.0-15-generic (x86_64).
+Before uninstall, this module version was ACTIVE on this kernel.
+
+vboxdrv.ko.zst:
+ - Uninstallation
+   - Deleting from: /lib/modules/6.14.0-15-generic/updates/dkms/
+ - Original module
+   - No original module was found for this module on this kernel.
+   - Use the dkms install command to reinstall any previous module version.
+
+vboxnetadp.ko.zst:
+ - Uninstallation
+   - Deleting from: /lib/modules/6.14.0-15-generic/updates/dkms/
+ - Original module
+   - No original module was found for this module on this kernel.
+   - Use the dkms install command to reinstall any previous module version.
+
+vboxnetflt.ko.zst:
+ - Uninstallation
+   - Deleting from: /lib/modules/6.14.0-15-generic/updates/dkms/
+ - Original module
+   - No original module was found for this module on this kernel.
+   - Use the dkms install command to reinstall any previous module version.
+depmod...
+</pre>
+4. On Kubuntu, I cannot run a VirtualBox VM and a virt-manager VM at the same time. To be able to start a VirtualBox VM, I need to run:
+<pre>
+sudo rmmod kvm_amd kvm
+</pre>
