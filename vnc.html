@@ -135,7 +135,40 @@ This will use an SSH tunnel, only requires access to TCP port 22 on the VNC serv
 ssh administrator@192.168.122.117 -f -L 5901:localhost:5901 "vncserver :1 -fg ; sleep 20" && vncviewer 127.0.0.1:1
 </pre>
 
-## openSUSE Tumbleweed, Alpine Linux, FreeBSD >= 14.2
+## openSUSE Tumbleweed
+
+In the installer: I have selected "Desktop with KDE Plasma". I have disabled the firewall and enabled the SSH server. I have created a user named administrator and selected the checkbox that makes the user administrator a sudoer.
+Make sure that no user is using the graphical user interface session (X server).
+
+On the computer where we install the VNC client:
+<pre>
+# Install the tigervnc VNC client package. E.g.
+sudo zypper install tigervnc
+
+ssh administrator@192.168.122.117
+
+sudo zypper install xorg-x11-Xvnc
+vncpasswd
+# Enter a longer than 6 characters password.
+# Do not provide a "view-only password".
+
+/usr/libexec/vncserver :1
+# If you press Ctrl+C, the VNC server will stop.
+</pre>
+
+In another terminal:
+<pre>
+vncviewer 192.168.122.117:1
+</pre>
+
+Alternatively, you can use a single command line on the VNC client computer.
+This will use an SSH tunnel, only requires access to TCP port 22 on the VNC server and starts the VNC server.
+
+<pre>
+ssh administrator@192.168.122.117 -f -L 5901:localhost:5901 "/usr/libexec/vncserver :1 ; sleep 20" && vncviewer 127.0.0.1:1
+</pre>
+
+## Alpine Linux, FreeBSD >= 14.2
 
 ## OpenBSD >= 7.5 with KDE Plasma desktop
 
