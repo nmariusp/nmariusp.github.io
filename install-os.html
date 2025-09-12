@@ -8,7 +8,9 @@ VM = virtual machine.
 
 # Linux
 
-## Fedora KDE Spin >= 38
+## Fedora KDE
+
+Version >= 38
 
 Screen recording https://www.youtube.com/watch?v=Doj8VpTLShs
 
@@ -19,11 +21,9 @@ Screen recording https://www.youtube.com/watch?v=Doj8VpTLShs
 * Survival in the Graphical User Interface (GUI). Install xrdp server https://nmariusp.github.io/rdp.html . Connect to the VM using RDP `xfreerdp /u:administrator /w:1920 /h:1080 /v:192.168.122.168 /video /rfx /network:lan /gfx /dynamic-resolution /sound:sys:pulse`
 <pre>sudo dnf remove kwrite ; sudo dnf install kate git-gui gitk krusader</pre>
 
-## Kubuntu >= 24.04
+## Kubuntu
 
-In the installer, you can select a minimal installation. This will not install any web browser. Install Mozilla Firefox Beta from the official Mozilla DEB repository https://support.mozilla.org/en-US/kb/install-firefox-linux#w_install-firefox-deb-package-for-debian-based-distributions
-
-## KDE neon
+Version >= 25.04.
 
 ## EndeavourOS with KDE Plasma installed from the OS installer, Arch Linux installed using archinstall with the option "desktop, kde" from the OS installer
 
@@ -65,10 +65,12 @@ zypper install git-gui gitk krusader
 
 ## Alpine Linux
 
+Version >= 3.22
+
 Screen recording https://www.youtube.com/watch?v=d9WXHMfBDT0
 
-I installed Alpine Linux 3.18 using alpine-standard-3.18.2-x86_64.iso. As per https://docs.alpinelinux.org/user-handbook/0.1a/index.html , using full setup-alpine, use default mirror, add "community" repository.
-In the installer, I created a user named "administrator" and the user can use "doas".
+I installed Alpine Linux 3.22 using alpine-standard-3.22.1-x86_64.iso. As per https://docs.alpinelinux.org/user-handbook/0.1a/index.html. Boot from DVD. Log in as user root without password. Run "setup-alpine". At "Enter mirror number" write "c" , then when asked again press Enter. This will add the "community" repository and use the default mirror (i.e "1", i.e. the Apline Linux CDN).
+Create a user named "administrator". This user by default can use "doas". "How would you like to use it?" "sys".
 
 I connect to the VM in text user interface mode using ssh:
 
@@ -80,27 +82,32 @@ doas su
 # Surviving at the command line: bash, emacs-nox, mc, git.
 apk update
 apk upgrade
-apk add emacs-nox mc git bash
-#chsh -s /bin/bash
+apk add nano emacs-nox mc git bash
+# chsh is not available by default. chsh is part of the shadow package.
+apk add shadow
+chsh -s /bin/bash
+exit
+chsh -s /bin/bash
+doas su
 
 # Surviving in GUI:
-setup-xorg-base
-# I do not install alpine-desktop, I install KDE Plasma desktop as per https://wiki.alpinelinux.org/wiki/KDE
+# setup-desktop does not have an option to install KDE Plasma. I install KDE Plasma desktop as per https://wiki.alpinelinux.org/wiki/KDE
 
-apk add plasma elogind polkit-elogind
-rc-update add dbus
-rc-update add elogind
-rc-update add polkit
-setup-devd udev
+# KDE Plasma is Wayland only.
+setup-wayland-base # Installs dbus, elogind, eudev, community repository, polkit-elogind.
+
+apk add plasma-desktop-meta # Installs 600 binary packages. Installs SDDM.
+apk add khelpcenter konsole firefox kcalc # Install the missing KDE Plasma packages.
 rc-update add sddm
 rc-service sddm start
-
 reboot
 </pre>
 
 # BSD
 
-## FreeBSD >= 14.3
+## FreeBSD
+
+Version >= 14.3
 
 Screen recording https://www.youtube.com/watch?v=8MqBnb3Y9JU
 
@@ -153,7 +160,7 @@ PATH=/sbin:/bin:/usr/sbin:/usr/bin:/usr/local/sbin:/usr/local/bin:$HOME/bin; exp
 </pre>
 
 ## OpenBSD
-For OpenBSD >= 7.6.
+Version >= 7.6.
 
 Install e.g. https://ftp.openbsd.org/pub/OpenBSD/7.6/amd64/install76.iso . Read https://ftp.openbsd.org/pub/OpenBSD/7.6/amd64/INSTALL.amd64 . Create user named administrator.
 Connect via SSH.
@@ -230,7 +237,8 @@ pkg_add kate
 
 ## Other
 
-## OpenIndiana >= 2024.04
+## OpenIndiana
+Version >= 2024.04
 
 Use e.g. OpenIndiana Hipster 2024.04 Live DVD (64-bit x86). In the installer, use whole disc, create a user named "admin". Connect via SSH.
 
@@ -256,7 +264,8 @@ FD_GEOM=1920x1080 FD_SESS=mate x11vnc -rfbauth ~/.vnc/passwd -display :1 -xkb -c
 vncviewer 192.168.122.197
 </pre>
 
-## Windows XP x64 with Service Pack 2
+## Windows XP
+Version x64 with Service Pack 2.
 
 As per https://pve.proxmox.com/wiki/Windows_XP_Guest_Notes#Use_VirtIO_Drivers
 
