@@ -164,17 +164,25 @@ reboot
 
 # Linux and FreeBSD client xfreerdp
 
-Install from your OS the binary package `freerdp`.
+The name of the executable of the GUI app RDP client might be: xfreerdp, wlfreerdp, xfreerdp3, wlfreerdp3.
+
+Install from your OS the binary package that contains that executable file. E.g. on Kubuntu >= 25.10 `apt install freerdp3-x11`.
 
 Run:
 <pre>
-xfreerdp --help
+xfreerdp3 --help
 </pre>
 
 Note down any of the command line parameters that you might need.
 
 Use a command line like:
 <pre>
+# For FreeRDP 3:
+
+xfreerdp3 /u:.\\administrator /w:1920 /h:1080 /v:192.168.122.168 /video /rfx /network:lan /gfx /dynamic-resolution /sound:sys:pulse
+
+# Or for FreeRDP 2:
+
 xfreerdp /u:administrator /w:1920 /h:1080 /v:192.168.122.168 /video /rfx /network:lan /gfx /dynamic-resolution /sound:sys:pulse
 </pre>
 
