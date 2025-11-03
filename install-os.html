@@ -160,9 +160,10 @@ PATH=/sbin:/bin:/usr/sbin:/usr/bin:/usr/local/sbin:/usr/local/bin:$HOME/bin; exp
 </pre>
 
 ## OpenBSD
-Version >= 7.6.
+Version >= 7.8.
 
-Install e.g. https://ftp.openbsd.org/pub/OpenBSD/7.6/amd64/install76.iso . Read https://ftp.openbsd.org/pub/OpenBSD/7.6/amd64/INSTALL.amd64 . Create user named administrator.
+Install e.g. https://cdn.openbsd.org/pub/OpenBSD/7.8/amd64/install78.iso . Read https://cdn.openbsd.org/pub/OpenBSD/7.8/amd64/INSTALL.amd64 . Create user named administrator.
+
 Connect via SSH.
 
 <pre>
@@ -191,10 +192,13 @@ doas su
 pkg_add kde-plasma
 # As per https://openports.pl/path/meta/kde,-plasma
 doas pkg_add tigervnc
-vncpasswd
+exit
+# As user administrator
+
+vncserver -fg
 # Asks for a VNC password that is at least 6 characters long.
 # Do not provide a view only password.
-vncserver -fg
+
 # Will create the file ~/.vnc/xstartup
 # On the VNC client computer run: vncviewer 192.168.122.180:1
 # This will start the OpenBSD X11 session with fvwm.
@@ -204,19 +208,25 @@ vncserver -fg
 mv ~/.vnc/xstartup ~/.vnc/xstartup~orig
 
 mg ~/.vnc/xstartup
-# Paste:
+</pre>
+
+As per https://openports.pl/path/meta/kde,-plasma , paste:
+<pre>
 export XDG_RUNTIME_DIR=/tmp/run/$(id -u)
 if [ ! -d $XDG_RUNTIME_DIR ]; then
     mkdir -m 700 -p $XDG_RUNTIME_DIR
 fi
 
-export QT_FORCE_STDERR_LOGGING=1
-export XDG_CURRENT_DESKTOP=KDE
-export DESKTOP_SESSION=plasma
-/usr/local/bin/startplasma-x11 > ~/.startplasma-x11.log 2>&1
+if [ -x /usr/local/bin/dbus-launch -a -z "${DBUS_SESSION_BUS_ADDRESS}" ]; then
+    eval `dbus-launch --sh-syntax --exit-with-x11`
+fi
 
-# Ctrl+X+S to save, Ctrl+X+C to close.
+/usr/local/bin/ck-launch-session /usr/local/bin/startplasma-x11
+</pre>
 
+Press Ctrl+X+S to save, Ctrl+X+C to close.
+
+<pre>
 chmod u+x ~/.vnc/xstartup
 
 vncserver -fg
