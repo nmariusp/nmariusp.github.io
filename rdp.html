@@ -1,14 +1,6 @@
 <script src="md-page.js"></script><noscript>
 
 # Remote Desktop Protocol (RDP) is better than VNC, Virtual Box, QEMU etc.
-# How to install the RDP server xrdp
-
-Screen recordings https://www.youtube.com/@nmariusp/search?query=xrdp
-
-# Glossary
-RDP is the Remote Desktop Protocol. https://en.wikipedia.org/wiki/Remote_Desktop_Protocol
-
-OS means operating system.
 
 # RDP features
 
@@ -16,9 +8,30 @@ OS means operating system.
 * Copy/paste of text works OK.
 * YouTube playback with almost acceptable speed and with sound. The xfreerdp command line parameter is "/video /rfx /gfx /sound:sys:pulse".
 * The speed is so good, that I do most of my work via an RDP connection. Everything is snappy, even using an Integrated Development Environment (IDE). The xfreerdp command line parameter is "/network:lan".
-* The home directory from the machine where the RDP client runs can be made available to the machine where the RDP server runs via Samba or Windows shares (the share named "\\tsclient"). The xfreerdp command line parameter is "+home-drive".
+* The home directory from the machine where the RDP client runs can be made available to the machine where the RDP server runs via Samba or Windows shares (the share named "\\\\tsclient"). The xfreerdp command line parameter is "+home-drive".
 
-# Linux and FreeBSD RDP server xrdp
+# Glossary
+RDP is the Remote Desktop Protocol. https://en.wikipedia.org/wiki/Remote_Desktop_Protocol
+
+# 1. How to install and use an RDP server
+
+There are 3 RDP servers: xrdp; the RDP server builtin to Windows; the RDP server builtin to GNOME desktop.
+
+# 1.1. GNOME >= 50, Ubuntu >= 26.04, Fedora Workstation >= 44
+
+GNOME Settings app > System > Remote Desktop > "Remote Login" tab > enable checkbox "Remote Login", under the "Login Details" groupbox, set a user and password. You can use the Linux user name and the Linux user password.
+
+Probably remote sound is not implemented yet.
+
+Restart the computer.
+
+Screen recordings https://www.youtube.com/watch?v=oelT312LqFI , https://www.youtube.com/watch?v=xjfC4GGI7_w
+
+# 1.2. How to install the RDP server xrdp
+
+Screen recordings https://www.youtube.com/@nmariusp/search?query=xrdp
+
+Linux and FreeBSD RDP server xrdp
 
 If you cannot make your X server work correctly, e.g. small resolution. An alternative is to install an RDP server and to connect to this computer from another computer using an RDP client.
 
@@ -32,18 +45,18 @@ Screen recording https://www.youtube.com/watch?v=mVP_PFbVCdo
 sudo apt install plasma-session-x11 xrdp xorgxrdp
 </pre>
 
-## Fedora >= 38
+## Fedora KDE >= 43
 
 Screen recording https://www.youtube.com/watch?v=c10rYXXE9lc
 
 <pre>
-sudo dnf install plasma-workspace-x11 # Needed on Fedora KDE >= 40.
+sudo dnf install plasma-workspace-x11
 sudo dnf install xrdp xorgxrdp
 # Edit file /etc/xrdp/xrdp.ini, uncomment the entire section "[Xorg]".
 sudo systemctl enable --now xrdp
 </pre>
 
-## EndeavourOS with KDE Plasma installed from the OS installer, Arch Linux installed using archinstall, from archinstall select the KDE Plasma 6 desktop
+## EndeavourOS with KDE Plasma installed from the OS installer, Arch Linux installed using archinstall, from archinstall select the KDE Plasma desktop
 
 Screen recording https://www.youtube.com/watch?v=qu6z-X_hngI , https://www.youtube.com/watch?v=NtOaWotMRms , https://www.youtube.com/watch?v=zKGC6ct2_3I
 
@@ -61,6 +74,7 @@ Then:
 <pre>
 # We need the KDE Plasma X11 session.
 sudo pacman -S plasma-x11-session
+# Reboot and log into the KDE Plasma X11 session.
 
 # As per https://wiki.archlinux.org/title/xrdp
 yay xrdp
@@ -101,9 +115,9 @@ startplasma-x11
 
 ## FreeBSD >= 14.3
 
-Screen recording https://www.youtube.com/watch?v=a7KAOnIAL8w
+Screen recordings https://www.youtube.com/@nmariusp/search?query=freebsd%20xrdp
 
-I installed FreeBSD 14.3, see the FreeBSD chapter from [rdp.html](rdp.html) .
+I installed FreeBSD 14.3, see the FreeBSD chapter from [install-os.html](install-os.html) .
 
 <pre>
 pkg install xrdp xorgxrdp
@@ -162,7 +176,14 @@ exec startplasma-x11
 reboot
 </pre>
 
-# Linux and FreeBSD client xfreerdp
+# 1.3. Windows RDP server
+On the Windows OS you can enable the RDP server. E.g. right click on Windows Start Menu > System > Rename this PC (advanced) > tab "Remote" > Remote Desktop groupbox > enable "Allow remote connections to this computer". On Windows Server without full GUI experience > sconfig.cmd.
+
+# 2. How to install and use an RDP client
+
+Possible RDP clients: freerdp started from the command line, GUI apps such as Remmina, the RDP client that is builtin to Windows (mstsc.exe), Microsoft SysInternals Suite rdcman, Android RDP clients.
+
+# 2.1. Linux and FreeBSD client xfreerdp
 
 The name of the executable of the GUI app RDP client might be: xfreerdp, wlfreerdp, xfreerdp3, wlfreerdp3.
 
@@ -195,15 +216,14 @@ Other interesting command line parameters:
 +home-drive
 </pre>
 
-# Windows RDP server
-On the Windows OS you can enable the RDP server. E.g. right click on Windows Start Menu > System > Rename this PC (advanced) > tab "Remote" > Remote Desktop groupbox > enable "Allow remote connections to this computer". On Windows Server without full GUI experience > sconfig.cmd.
-
-# Windows RDP client
+# 2.2. Windows RDP client
 Open the app Remote Desktop Connection.
 Or install another RDP client e.g. "Sysinternals Remote Desktop Connection Manager" (rdcman) https://en.wikipedia.org/wiki/Remote_Desktop_Protocol
 
 I prefer to use the app "Sysinternals Remote Desktop Connection Manager" because I need the RDP client to have a window titlebar and window border, I can hide the menu, and after I resize the window, if I select to reconnect, the RDP server's resolution will be changed correctly.
 
-# Operating systems that do not have an RDP server such as xrdp
+Video https://www.youtube.com/watch?v=YK1NHeQgjP8
+
+# 3. Operating systems that do not have an RDP server
 
 I use a [VNC server](vnc.html) such as TigerVNC.
