@@ -91,15 +91,8 @@ chsh -s /bin/bash
 doas su
 
 # Surviving in GUI:
-# setup-desktop does not have an option to install KDE Plasma. I install KDE Plasma desktop as per https://wiki.alpinelinux.org/wiki/KDE
-
-# KDE Plasma is Wayland only.
-setup-wayland-base # Installs dbus, elogind, eudev, community repository, polkit-elogind.
-
-apk add plasma-desktop-meta # Installs 600 binary packages. Installs SDDM.
-apk add khelpcenter konsole firefox kcalc # Install the missing KDE Plasma packages.
-rc-update add sddm
-rc-service sddm start
+setup-desktop
+# Write "plasma".
 reboot
 </pre>
 

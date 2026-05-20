@@ -133,49 +133,6 @@ pkg install firefox
 # Restart the computer.
 </pre>
 
-## Alpine Linux
-
-Screen recording https://www.youtube.com/watch?v=d9WXHMfBDT0
-
-I installed Alpine Linux 3.18 using alpine-standard-3.18.2-x86_64.iso. As per https://docs.alpinelinux.org/user-handbook/0.1a/index.html , using full setup-alpine, use default mirror, add "community" repository.
-In the installer, I created a user named "administrator" and the user can use "doas".
-
-I connect to the VM in text user interface mode using ssh:
-
-<pre>
-ssh administrator@192.68.122.6
-
-doas su
-
-# Surviving at the command line: bash, emacs-nox, mc, git.
-apk update
-apk upgrade
-apk add emacs-nox mc git bash
-#chsh -s /bin/bash
-
-# Surviving in GUI:
-setup-xorg-base
-# I do not install alpine-desktop, I install KDE Plasma desktop as per https://wiki.alpinelinux.org/wiki/KDE
-
-apk add plasma elogind polkit-elogind
-rc-update add dbus
-rc-update add elogind
-rc-update add polkit
-setup-devd udev
-rc-update add sddm
-rc-service sddm start
-
-# Install xrdp and xorgxrdp per https://wiki.alpinelinux.org/wiki/Remote_Desktop_Server
-apk add xrdp xorgxrdp
-rc-update add xrdp
-rc-update add xrdp-sesman
-
-# Create file ~/.xinitrc with content:
-exec startplasma-x11
-
-reboot
-</pre>
-
 # 1.3. Windows RDP server
 On the Windows OS you can enable the RDP server. E.g. right click on Windows Start Menu > System > Rename this PC (advanced) > tab "Remote" > Remote Desktop groupbox > enable "Allow remote connections to this computer". On Windows Server without full GUI experience > sconfig.cmd.
 
