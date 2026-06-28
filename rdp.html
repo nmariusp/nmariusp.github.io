@@ -1,22 +1,25 @@
-<script src="md-page.js"></script><noscript>
+//<script src="md-page.js"></script><noscript>
 
-# Remote Desktop Protocol (RDP) is better than VNC, Virtual Box, QEMU etc.
+# Remote Desktop Protocol (RDP) is better than VNC, Virtual Box, QEMU, virt-manager, hyperv etc.
 
 # RDP features
 
 The RDP connection features that I need:
-* `RDP feature A. speed` The speed is so good, that I do most of my work via an RDP connection. Everything is snappy, even using an Integrated Development Environment (IDE). The xfreerdp command line parameter is "/network:lan".
-* `RDP feature B. copy/paste of plain text` Copy/paste of plain text works correctly.
-* `RDP feature C. resize` Resizing the window of the freerdp RDP client changes the resolution of the RDP server. If you use the RDP client rdcman, resize the window of rdcman, then reconnect the RDP connection. The xfreerdp command line parameter is "/dynamic-resolution".
+* `RDP feature A. speed` The speed is so good, that I do most of my work via an RDP connection. Everything is snappy, even using an Integrated Development Environment (IDE). The freerdp command line parameter is "/network:lan".
+* `RDP feature B. copy/paste of plain text`
+* `RDP feature C. resize` Resizing the window of the freerdp RDP client changes the resolution of the RDP server. If you use the RDP client rdcman, resize the window of rdcman, then reconnect the RDP connection. The freerdp command line parameter is "/dynamic-resolution".
 * `RDP feature D. I can just connect from the RDP client computer` This feature is missing when a human needs to log into the graphical session on the RDP server computer. Or when a human needs to accept all incomming RDP connections.
 
 Other RDP connection features:
-* Sound. Sound is generated on the RDP server and can be heard on the RDP client. The xfreerdp command line parameter is "/sound:sys:pulse".
-* YouTube playback with almost acceptable speed and with sound. The xfreerdp command line parameter is "/video /rfx /gfx".
-* The home directory from the RDP client machine can be made available to the RDP server machine via Samba or Windows shares (the share named "\\\\tsclient"). The xfreerdp command line parameter is "+home-drive".
+* Sound. Sound is generated on the RDP server and can be heard on the RDP client. The freerdp command line parameter is "/sound:sys:pulse".
+* YouTube playback with almost acceptable speed and with sound. The freerdp command line parameter is "/video /rfx /gfx".
+* The home directory from the RDP client machine can be made available to the RDP server machine via Samba or Windows shares (the share named "\\\\tsclient"). The freerdp command line parameter is "+home-drive".
+* Copy/paste of files. Drag and drop of files between RDP client and RDP server.
+* Use less bandwidth e.g. by using a smaller resolution, by using a smaller number of bits for color per pixel.
 
 # Glossary
-RDP is the Remote Desktop Protocol. https://en.wikipedia.org/wiki/Remote_Desktop_Protocol
+* RDP is the Remote Desktop Protocol. https://en.wikipedia.org/wiki/Remote_Desktop_Protocol
+* freerdp - a free software RDP client, https://www.freerdp.com . Command line executables: wlfreerdp or xfreerdp.
 
 # 1. How to install and use an RDP server
 
@@ -57,15 +60,19 @@ kscreen-doctor output.1.addCustomMode.960.990.60000.full
 
 The RDP connection speed is correct, copy paste of plain text works corectly.
 
-# 1.3. How to install the RDP server xrdp
+RDP feature summary: `RDP feature A. speed` OK, `RDP feature B. copy/paste of plain text` OK, `RDP feature C. resize` requires command line workaround, `RDP feature D. I can just connect from the RDP client computer` missing.
+
+# 1.3. RDP server xrdp
 
 Screen recordings https://www.youtube.com/@nmariusp/search?query=xrdp
 
 Linux and FreeBSD RDP server xrdp
 
-If you cannot make your X server work correctly, e.g. small resolution. An alternative is to install an RDP server and to connect to this computer from another computer using an RDP client.
+E.g. on FreeBSD if you cannot make your X server work correctly, e.g. small resolution. An alternative is to install xrdp.
 
 Note: on the RDP server, you should log out if you use X11 and you are connected via the computer's keyboard and mouse (aka Ctrl+Alt+F1, aka one of the 8 virtual consoles). Before connecting using an RDP client.
+
+RDP feature summary: `RDP feature A. speed` OK, `RDP feature B. copy/paste of plain text` OK, `RDP feature C. resize` OK, `RDP feature D. I can just connect from the RDP client computer` OK.
 
 ## Kubuntu >= 25.10
 
@@ -86,7 +93,7 @@ sudo dnf install xrdp xorgxrdp
 sudo systemctl enable --now xrdp
 </pre>
 
-## EndeavourOS with KDE Plasma installed from the OS installer, Arch Linux installed using archinstall, from archinstall select the KDE Plasma desktop
+## Arch Linux installed using archinstall, from archinstall select the KDE Plasma desktop. CachyOS, EndeavourOS with KDE Plasma installed from the OS installer
 
 Screen recording https://www.youtube.com/watch?v=qu6z-X_hngI , https://www.youtube.com/watch?v=NtOaWotMRms , https://www.youtube.com/watch?v=zKGC6ct2_3I
 
@@ -108,7 +115,9 @@ sudo pacman -S plasma-x11-session
 
 # As per https://wiki.archlinux.org/title/xrdp
 yay xrdp
+# Select option 1 to build and install xrdp.
 yay xorgxrdp
+# Select option 1 to build and install xorgxrdp.
 
 sudo systemctl enable --now xrdp
 
@@ -164,39 +173,41 @@ pkg install firefox
 </pre>
 
 # 1.4. Windows RDP server
-On the Windows OS you can enable the RDP server. E.g. right click on Windows Start Menu > System > Rename this PC (advanced) > tab "Remote" > Remote Desktop groupbox > enable "Allow remote connections to this computer". On Windows Server without full GUI experience > sconfig.cmd.
+On the Windows operating system you can enable the RDP server. E.g. right click on Windows Start Menu > System > "Rename this PC (advanced)" > tab "Remote" > "Remote Desktop" groupbox > enable "Allow remote connections to this computer". On Windows Server without full GUI experience > sconfig.cmd.
 
 # 2. How to install and use an RDP client
 
-Possible RDP clients: freerdp started from the command line, GUI apps such as Remmina, the RDP client that is builtin to Windows (mstsc.exe), Microsoft SysInternals Suite rdcman, Android RDP clients.
+Possible RDP clients: freerdp started from the command line, GUI apps such as Remmina, the RDP client that is builtin to Windows (mstsc.exe), Microsoft SysInternals Suite (rdcman.exe), Android RDP clients.
 
-# 2.1. Linux and FreeBSD client xfreerdp
+# 2.1. Linux and FreeBSD RDP client freerdp
 
-The name of the executable of the GUI app RDP client might be: xfreerdp, wlfreerdp, xfreerdp3, wlfreerdp3.
+The name of the executable might be: wlfreerdp (Wayland app), xfreerdp (x server app), sdlfreerdp (SDL library app).
 
-Install from your OS the binary package that contains that executable file. E.g. on Kubuntu >= 25.10 `apt install freerdp3-x11`.
+Install from your operating system the binary package that contains that executable file. E.g. on Kubuntu >= 26.04 `apt install freerdp-x11`.
 
 Run:
 <pre>
-xfreerdp3 --help
+xfreerdp --help
 </pre>
 
 Note down any of the command line parameters that you might need.
 
 Use a command line like:
 <pre>
-# For FreeRDP 3:
+# For FreeRDP >= 3:
 
-xfreerdp3 /u:.\\administrator /w:1920 /h:1080 /v:192.168.122.168 /video /rfx /network:lan /gfx /dynamic-resolution /sound:sys:pulse
+xfreerdp /u:.\\administrator /w:1920 /h:1080 /v:192.168.122.168 /video /rfx /network:lan /gfx /dynamic-resolution /sound:sys:pulse
+
+# Here ".\\" represents the "domain" of the user "administrator". "." means the current computer as a domain.
 
 # Or for FreeRDP 2:
 
 xfreerdp /u:administrator /w:1920 /h:1080 /v:192.168.122.168 /video /rfx /network:lan /gfx /dynamic-resolution /sound:sys:pulse
 </pre>
 
-Make sure that in the "Session" combo box "Xorg" is selected. Not something else such as "Xvnc".
+When connecting to an xrdp RDP server, make sure that in the "Session" combo box "Xorg" is selected. Not something else such as "Xvnc".
 
-You can resize the window and the resolution of the RDP server will change correctly.
+You can resize the freerdp RDP client window and the resolution of the RDP server will change correctly.
 
 Other interesting command line parameters:
 <pre>
@@ -205,9 +216,9 @@ Other interesting command line parameters:
 
 # 2.2. Windows RDP client
 Open the app Remote Desktop Connection.
-Or install another RDP client e.g. "Sysinternals Remote Desktop Connection Manager" (rdcman) https://en.wikipedia.org/wiki/Remote_Desktop_Protocol
+Or install another RDP client e.g. "Sysinternals Remote Desktop Connection Manager" (rdcman.exe) https://en.wikipedia.org/wiki/Remote_Desktop_Protocol
 
-I prefer to use the app "Sysinternals Remote Desktop Connection Manager" because I need the RDP client to have a window titlebar and window border, I can hide the menu, and after I resize the window, if I select to reconnect, the RDP server's resolution will be changed correctly.
+I prefer to use the app "Sysinternals Remote Desktop Connection Manager" (rdcman.exe) because I need the RDP client to have a window titlebar and window border, I can hide the menu, and after I resize the window, if I select to reconnect, the RDP server's resolution will be changed correctly.
 
 Video https://www.youtube.com/watch?v=YK1NHeQgjP8
 
