@@ -4,18 +4,23 @@
 
 # RDP features
 
-* Resizing the window of the freerdp RDP client changes the resolution of the RDP server. If you use the RDP client rdcman, resize the window of rdcman, then reconnect the RDP connection. The xfreerdp command line parameter is "/dynamic-resolution".
-* Copy/paste of text works OK.
-* YouTube playback with almost acceptable speed and with sound. The xfreerdp command line parameter is "/video /rfx /gfx /sound:sys:pulse".
-* The speed is so good, that I do most of my work via an RDP connection. Everything is snappy, even using an Integrated Development Environment (IDE). The xfreerdp command line parameter is "/network:lan".
-* The home directory from the machine where the RDP client runs can be made available to the machine where the RDP server runs via Samba or Windows shares (the share named "\\\\tsclient"). The xfreerdp command line parameter is "+home-drive".
+The RDP connection features that I need:
+* `RDP feature A. speed` The speed is so good, that I do most of my work via an RDP connection. Everything is snappy, even using an Integrated Development Environment (IDE). The xfreerdp command line parameter is "/network:lan".
+* `RDP feature B. copy/paste of plain text` Copy/paste of plain text works correctly.
+* `RDP feature C. resize` Resizing the window of the freerdp RDP client changes the resolution of the RDP server. If you use the RDP client rdcman, resize the window of rdcman, then reconnect the RDP connection. The xfreerdp command line parameter is "/dynamic-resolution".
+* `RDP feature D. I can just connect from the RDP client computer` This feature is missing when a human needs to log into the graphical session on the RDP server computer. Or when a human needs to accept all incomming RDP connections.
+
+Other RDP connection features:
+* Sound. Sound is generated on the RDP server and can be heard on the RDP client. The xfreerdp command line parameter is "/sound:sys:pulse".
+* YouTube playback with almost acceptable speed and with sound. The xfreerdp command line parameter is "/video /rfx /gfx".
+* The home directory from the RDP client machine can be made available to the RDP server machine via Samba or Windows shares (the share named "\\\\tsclient"). The xfreerdp command line parameter is "+home-drive".
 
 # Glossary
 RDP is the Remote Desktop Protocol. https://en.wikipedia.org/wiki/Remote_Desktop_Protocol
 
 # 1. How to install and use an RDP server
 
-There are 3 RDP servers: xrdp; the RDP server builtin to Windows; the RDP server builtin to GNOME desktop.
+There are 4 RDP servers: xrdp and the RDP servers that are built into Windows (operating system), GNOME (desktop), KDE Plasma (desktop).
 
 # 1.1. GNOME >= 50, Ubuntu >= 26.04, Fedora Workstation >= 44
 
@@ -27,7 +32,32 @@ Restart the computer.
 
 Screen recordings https://www.youtube.com/watch?v=oelT312LqFI , https://www.youtube.com/watch?v=xjfC4GGI7_w
 
-# 1.2. How to install the RDP server xrdp
+# 1.2. KDE Plasma >= 6.7
+Screen recordings https://www.youtube.com/watch?v=2JkW3iYyDXE
+
+Let's say that "U" is the name of the user that you use for logging into KDE Plasma. Make sure that you are logged into KDE Plasma as user "U".
+
+Start the "System Settings" app > "Security & Privacy" > "Remote Desktop". Check the checkbox "U Login with your system password". Click on the "+ Add New..." button > "Username:" "U", "Password:" enter the password of the user "U". Turn on the checkbox "Autostart on login". Turn on the instant toggle "Enable RDP server". Click the "Apply" button.
+
+You can connect from an RDP client. E.g.:
+<pre>
+xfreerdp /u:.\\administrator /v:192.168.122.192 /video /rfx /network:lan /gfx
+</pre>
+
+You can change the KDE Plasma resolution to be e.g. the left half of your screen:
+<pre>
+kscreen-doctor -o
+# E.g.
+# Output: 1 Virtual-1 7530657f-8794-4e63-b8f4-ab83368f144a
+# In the output I can see that there is only one "Output" named "Output: 1".
+kscreen-doctor output.1.addCustomMode.960.990.60000.full
+# From "System Settings" > "Display Configuration" > "Resolution:" select "960 x 990".
+# Note: if you are connected via RDP, the mouse might not be calibrated (cusor is in place A but clicks happen in place B). Reconnect via RDP.
+</pre>
+
+The RDP connection speed is correct, copy paste of plain text works corectly.
+
+# 1.3. How to install the RDP server xrdp
 
 Screen recordings https://www.youtube.com/@nmariusp/search?query=xrdp
 
@@ -133,7 +163,7 @@ pkg install firefox
 # Restart the computer.
 </pre>
 
-# 1.3. Windows RDP server
+# 1.4. Windows RDP server
 On the Windows OS you can enable the RDP server. E.g. right click on Windows Start Menu > System > Rename this PC (advanced) > tab "Remote" > Remote Desktop groupbox > enable "Allow remote connections to this computer". On Windows Server without full GUI experience > sconfig.cmd.
 
 # 2. How to install and use an RDP client
