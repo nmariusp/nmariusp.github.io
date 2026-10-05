@@ -74,7 +74,7 @@ Note: on the RDP server, you should log out if you use X11 and you are connected
 
 RDP feature summary: `RDP feature A. speed` OK, `RDP feature B. copy/paste of plain text` OK, `RDP feature C. resize` OK, `RDP feature D. I can just connect from the RDP client computer` OK.
 
-## Kubuntu >= 25.10
+## 1.3.1. Kubuntu >= 25.10
 
 Screen recording https://www.youtube.com/watch?v=mVP_PFbVCdo
 
@@ -82,7 +82,7 @@ Screen recording https://www.youtube.com/watch?v=mVP_PFbVCdo
 sudo apt install plasma-session-x11 xrdp xorgxrdp
 </pre>
 
-## Fedora KDE >= 43
+## 1.3.2. Fedora KDE >= 43
 
 Screen recording https://www.youtube.com/watch?v=c10rYXXE9lc
 
@@ -93,7 +93,7 @@ sudo dnf install xrdp xorgxrdp
 sudo systemctl enable --now xrdp
 </pre>
 
-## Arch Linux installed using archinstall, from archinstall select the KDE Plasma desktop. CachyOS, EndeavourOS with KDE Plasma installed from the OS installer
+## 1.3.3. Arch Linux installed using archinstall, from archinstall select the KDE Plasma desktop. CachyOS, EndeavourOS with KDE Plasma installed from the OS installer
 
 Screen recording https://www.youtube.com/watch?v=qu6z-X_hngI , https://www.youtube.com/watch?v=NtOaWotMRms , https://www.youtube.com/watch?v=zKGC6ct2_3I
 
@@ -131,7 +131,7 @@ export DESKTOP_SESSION=plasma
 /usr/lib/plasma-dbus-run-session-if-needed startplasma-x11
 </pre>
 
-## openSUSE Tumbleweed
+## 1.3.4. openSUSE Tumbleweed
 
 Screen recording https://www.youtube.com/watch?v=AKIfsZao1u0
 
@@ -152,7 +152,7 @@ If the KDE Plasma X11 session is not started automatically, create the file ~/.x
 startplasma-x11
 </pre>
 
-## FreeBSD >= 14.3
+## 1.3.5. FreeBSD >= 14.3
 
 Screen recordings https://www.youtube.com/@nmariusp/search?query=freebsd%20xrdp
 
@@ -179,7 +179,7 @@ On the Windows operating system you can enable the RDP server. E.g. right click 
 
 Possible RDP clients: freerdp started from the command line, GUI apps such as Remmina, the RDP client that is builtin to Windows (mstsc.exe), Microsoft SysInternals Suite (rdcman.exe), Android RDP clients.
 
-# 2.1. Linux and FreeBSD RDP client freerdp
+# 2.1. Linux and FreeBSD RDP client FreeRDP
 
 The name of the executable might be: wlfreerdp (Wayland app), xfreerdp (x server app), sdlfreerdp (SDL library app).
 
@@ -199,10 +199,6 @@ Use a command line like:
 xfreerdp /u:.\\administrator /w:1920 /h:1080 /v:192.168.122.168 /video /rfx /network:lan /gfx /dynamic-resolution /sound:sys:pulse
 
 # Here ".\\" represents the "domain" of the user "administrator". "." means the current computer as a domain.
-
-# Or for FreeRDP 2:
-
-xfreerdp /u:administrator /w:1920 /h:1080 /v:192.168.122.168 /video /rfx /network:lan /gfx /dynamic-resolution /sound:sys:pulse
 </pre>
 
 When connecting to an xrdp RDP server, make sure that in the "Session" combo box "Xorg" is selected. Not something else such as "Xvnc".
@@ -213,6 +209,17 @@ Other interesting command line parameters:
 <pre>
 +home-drive
 </pre>
+
+## 2.1.1. FreeRDP from Flathub
+
+<pre>
+flatpak remote-add --user --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+flatpak install com.freerdp.FreeRDP
+# Run.
+flatpak run com.freerdp.FreeRDP --version
+</pre>
+
+Note: when using <code>+home-drive</code> the SMB share <code>\\\\tsclient\home</code> contains just the "Downloads" directory. Because of flatpak security.
 
 # 2.2. Windows RDP client
 Open the app Remote Desktop Connection.
